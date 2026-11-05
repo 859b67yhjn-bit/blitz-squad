@@ -7,7 +7,8 @@ on:
 
 jobs:
   ipa:
-    runs-on: macos-latest
+    # Intel Mac: GitHub's Apple-silicon pool keeps dropping queued jobs ("not acquired by Runner")
+    runs-on: macos-15-intel
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
