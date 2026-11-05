@@ -2,11 +2,11 @@
   "appId": "ro.blitzsquad.joc",
   "appName": "Blitz Squad",
   "webDir": "www",
-  "backgroundColor": "#0c111c",
+  "backgroundColor": "#141c63",
   "ios": {
     "contentInset": "never",
     "scrollEnabled": false,
-    "backgroundColor": "#0c111c",
+    "backgroundColor": "#141c63",
     "preferredContentMode": "mobile"
   }
 }
