@@ -1100,6 +1100,67 @@ function mR(x0, z0, x1, z1, ch) { for (let j = z0; j <= z1; j++) for (let i = x0
 const mP = (x, z, ch) => mR(x, z, x, z, ch);
 const mirrorHolds = (A) => A.map((h) => ({ x: MW - h.x, z: h.z, lx: MW - h.lx, lz: h.lz }));
 const MAPDEFS = {
+  bazar: {
+    name: 'Bazarul', sub: 'Străduțe strâmte, pentru first person', theme: 'desert', tall: true,
+    build() {
+      // defenders' spawn; CT corridors leave from its top corners and turn down into the sites
+      mR(20, 1, 31, 5, '.'); mR(22, 2, 29, 4, 'D');
+      mR(16, 1, 19, 3, '.'); mR(16, 4, 18, 11, '.'); mR(32, 1, 35, 3, '.'); mR(33, 4, 35, 11, '.');
+      // A site (left) and B site (right)
+      mR(3, 3, 15, 14, '.'); mR(36, 3, 48, 14, '.');
+      mR(5, 5, 11, 10, '1'); mR(40, 5, 46, 10, '2');
+      mR(15, 3, 15, 8, '#'); mR(36, 3, 36, 8, '#'); mR(13, 13, 14, 14, '#');
+      // CT mid: down from the spawn, right, down into the plaza
+      mR(24, 6, 27, 9, '.'); mR(24, 10, 31, 12, '.'); mR(29, 13, 31, 20, '.');
+      // the plaza in the middle, with a statue block in the centre
+      mR(20, 21, 31, 30, '.'); mR(24, 24, 27, 27, '#'); mR(20, 28, 21, 29, '#');
+      // lower mid: from the attackers' spawn up, left, up into the plaza
+      mR(24, 44, 27, 49, '.'); mR(19, 41, 27, 43, '.'); mR(19, 31, 22, 40, '.'); mR(22, 39, 22, 41, '#');
+      // A short: from the plaza up the left, then into the corner of A
+      mR(16, 22, 19, 26, '.'); mR(16, 15, 19, 21, '.'); mR(13, 15, 15, 16, '.'); mR(18, 19, 19, 20, '#');
+      // A long: outside, the doors, the long room in two offset halves, a stepped corridor up into A
+      mR(3, 44, 17, 49, '.'); mR(16, 46, 16, 47, '#'); mR(4, 41, 6, 43, '.'); mR(3, 35, 8, 40, '.'); mR(3, 29, 11, 34, '.'); mR(6, 38, 7, 38, '#');
+      mR(9, 21, 12, 28, '.'); mR(5, 15, 7, 21, '.'); mR(8, 21, 8, 21, '.'); mR(5, 14, 7, 14, '.');
+      // B tunnels: outside, up, a turn, up again, then the entrance room through a door into B
+      mR(34, 44, 48, 49, '.'); mR(35, 46, 35, 47, '#'); mR(44, 37, 47, 43, '.'); mR(38, 33, 47, 36, '.'); mR(38, 22, 41, 32, '.'); mR(42, 18, 47, 24, '.'); mR(43, 15, 46, 17, '.');
+      mR(42, 19, 43, 20, '#');
+      // mid to B: a connector lower than A short, into the tunnels
+      mR(32, 27, 37, 30, '.');
+      // attackers' spawn: a courtyard at the bottom, left / right exits go up into the outside areas
+      mR(18, 50, 33, 57, '.'); mR(18, 46, 20, 49, '.'); mR(31, 46, 33, 49, '.'); mR(20, 54, 31, 56, 'T');
+      mR(21, 50, 22, 51, '#'); mR(29, 50, 30, 51, '#');
+      // cover and dressing: crates and sandbags on the sites, market stalls outside, barrels, pots, palms, bushes
+      mP(8, 7, 'C'); mP(9, 7, 'c'); mP(12, 9, 'c'); mP(4, 12, 'o'); mR(5, 12, 6, 12, 'k'); mP(14, 4, 'p'); mP(3, 3, 'P');
+      mP(43, 7, 'C'); mP(42, 7, 'c'); mP(39, 9, 'c'); mP(47, 12, 'o'); mR(45, 12, 46, 12, 'k'); mP(37, 4, 'p'); mP(48, 3, 'P');
+      mP(21, 22, 'c'); mP(30, 29, 'c'); mP(31, 22, 'o'); mP(31, 30, 'P'); mR(28, 21, 28, 22, 'w');
+      mP(20, 1, 'o'); mP(31, 1, 'o'); mP(21, 5, 'p'); mP(30, 5, 'p');
+      mP(18, 57, 'c'); mP(33, 57, 'c'); mP(19, 52, 'o'); mP(32, 52, 'o');
+      mR(8, 49, 10, 49, 's'); mP(3, 44, 'o'); mP(12, 44, 'c'); mR(41, 49, 43, 49, 's'); mP(48, 44, 'o'); mP(37, 44, 'c');
+      mP(3, 29, 'c'); mP(10, 33, 'C'); mP(3, 35, 'o'); mP(47, 33, 'c'); mP(38, 36, 'o'); mP(47, 18, 'c'); mP(37, 30, 'c');
+      mR(20, 42, 21, 43, 'g'); mR(30, 13, 31, 14, 'g'); mR(46, 46, 47, 47, 'g'); mR(4, 45, 5, 46, 'g');
+    },
+    floor(i, j) {
+      if (i >= 3 && i <= 15 && j >= 3 && j <= 14) return 2;
+      if (i >= 36 && i <= 48 && j >= 3 && j <= 14) return 3;
+      if (i >= 38 && i <= 47 && j >= 15 && j <= 43) return 4;
+      if ((i >= 20 && i <= 37 && j >= 21 && j <= 30) || (i >= 24 && i <= 31 && j >= 6 && j <= 20) || (i >= 19 && i <= 27 && j >= 31 && j <= 49)) return 1;
+      return 0;
+    },
+    ctGap: [[16, 10], [36, 10]],
+    holdsA: [{ x: 8.5, z: 8.5, lx: 7.5, lz: 16 }, { x: 12.5, z: 6.5, lx: 14, lz: 16 }, { x: 4.5, z: 10.5, lx: 7.5, lz: 16 }, { x: 11.5, z: 12.5, lx: 14.5, lz: 16 }],
+    holdsB: [{ x: 43.5, z: 8.5, lx: 45, lz: 16 }, { x: 39.5, z: 11.5, lx: 45, lz: 16 }, { x: 47.5, z: 7.5, lx: 45, lz: 16 }, { x: 41.5, z: 4.5, lx: 45, lz: 15 }],
+    holdsM: [{ x: 25.5, z: 11, lx: 30, lz: 20 }, { x: 30, z: 18, lx: 30, lz: 26 }, { x: 17.5, z: 16, lx: 17.5, lz: 25 }],
+    routes: {
+      1: [[[19.5, 47.5], [10.5, 46.5], [5, 42], [4.5, 36], [9.5, 31.5], [10.5, 24], [6, 18], [6, 13], [8.5, 8.5]],
+        [[25.5, 47], [25.5, 42], [20.5, 38], [20.5, 32], [22.5, 30], [22.5, 23], [17, 23], [17, 17], [14, 15.5], [10.5, 9.5]],
+        [[19.5, 47.5], [6.5, 47], [5, 42], [4.5, 36], [7.5, 31], [10.5, 24], [6, 18], [6, 12.5], [6.5, 7.5]]],
+      2: [[[32, 48], [40, 47], [45.5, 44], [45.5, 38], [40, 35], [39.5, 28], [40.5, 23], [44.5, 22], [45, 16], [43.5, 8.5]],
+        [[25.5, 47], [25.5, 42], [20.5, 38], [21, 32], [29, 29], [35, 28.5], [39.5, 27], [40.5, 23], [44.5, 22], [45, 16], [42.5, 9.5]],
+        [[32, 48], [44, 46.5], [45.5, 40], [42, 34.5], [39.5, 29], [40, 23], [46, 21], [45, 15.5], [46.5, 7]]],
+    },
+    far: [[30, 16], [22.5, 22.5], [7.5, 31.5], [40, 28], [25.5, 3.5], [25.5, 46.5]],
+    region(x, z) { if (x < 16 && z < 17) return 'A'; if (x > 35 && z < 17) return 'B'; return null; },
+  },
   oaza: {
     name: 'Oaza', sub: 'Orășel în deșert', theme: 'desert',
     build() {
@@ -1263,7 +1324,8 @@ function loadMap(id) {
     const d = dist[k] < 0 ? 9 : dist[k];
     let h = d <= 1 ? 1.45 : d === 2 ? 2.1 : 2.6;
     if (i === 0 || j === 0 || i === MW - 1 || j === MH - 1) h = Math.max(h, 2.0);
-    wallH[k] = h + ((i * 7 + j * 3) % 4 === 0 && d >= 2 ? 0.25 : 0);
+    if (def.tall) h = 3.6 + (d >= 2 && (i * 7 + j * 3) % 5 === 0 ? 0.5 : 0) + (d >= 3 && (i * 3 + j * 5) % 7 === 0 ? 0.6 : 0);
+    wallH[k] = def.tall ? h : h + ((i * 7 + j * 3) % 4 === 0 && d >= 2 ? 0.25 : 0);
   }
   for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) { const k = j * MW + i; topH[k] = grid[k] === 1 ? wallH[k] : grid[k] === 2 ? PROP_H[MAPC[j][i]] || 1 : 0; }
   for (const s of [1, 2]) {
@@ -1272,7 +1334,7 @@ function loadMap(id) {
     for (const [x, z] of siteTiles[s]) { sx += x; sz += z; S.x0 = Math.min(S.x0, x - 0.5); S.x1 = Math.max(S.x1, x + 0.5); S.z0 = Math.min(S.z0, z - 0.5); S.z1 = Math.max(S.z1, z + 0.5); }
     S.cx = sx / siteTiles[s].length; S.cz = sz / siteTiles[s].length;
   }
-  HOLDS.A = def.holdsA; HOLDS.B = mirrorHolds(def.holdsA); HOLDS.M = def.holdsM;
+  HOLDS.A = def.holdsA; HOLDS.B = def.holdsB || mirrorHolds(def.holdsA); HOLDS.M = def.holdsM;
   ROUTES[1] = def.routes[1]; ROUTES[2] = def.routes[2];
   FAR_POINTS.length = 0; FAR_POINTS.push(...def.far);
   MAP = { id: MAPDEFS[id] ? id : 'oaza', def };
@@ -3036,7 +3098,7 @@ function lobbySlotsUI() {
 
 
 /* ================= game state ================= */
-const settings = { team: 'atk', agent: 'bolt', mode: 5, diff: 'normal', map: 'oaza', autoFire: false, fireV: 2, gfx: 'auto', assist: 'normal', aimV: 2, queue: 'train', cam: 'tpp', camV: 1, xh: null };
+const settings = { team: 'atk', agent: 'bolt', mode: 5, diff: 'normal', map: 'bazar', mapV: 2, autoFire: false, fireV: 2, gfx: 'auto', assist: 'normal', aimV: 2, queue: 'train', cam: 'tpp', camV: 1, xh: null };
 let DIFF = DIFFS.normal;
 const game = { state: 'menu', paused: false, time: 0, round: 0, sAtk: 0, sDef: 0, timer: ROUND_TIME, freezeT: 0, postT: 0,
   loss: { atk: 0, def: 0 }, planted: false, atkSite: 1, intel: { atk: null, def: null }, specId: -1, lastWinner: null };
@@ -5674,7 +5736,7 @@ const ROOM_MAX = 10, TEAM_MAX = 5;
 const NET = {
   mode: null, inputs: {}, lastAct: {}, ev: [], evSeq: 0, seenEv: 0, snapT: 0, inT: 0, actQ: [], actN: 0, actT: 0, fireUntil: 0, fireA: 0, act: false,
   mid: 0, curMid: 0, ready: {}, started: false, leaderAtStart: '',
-  role: 'solo', leader: null, joinConn: null, guests: new Map(), members: [], known: new Set(), cfg: { map: 'oaza', q: 'custom' },
+  role: 'solo', leader: null, joinConn: null, guests: new Map(), members: [], known: new Set(), cfg: { map: 'bazar', q: 'custom' },
   team: 'atk', readyL: false, status: '', joining: false, lastCard: '',
 };
 const W_IDS = ['pistol', 'revolver', 'smg', 'shotgun', 'rifle', 'sniper', 'carbine', 'knife'];
@@ -6396,6 +6458,7 @@ function drawOverlay(dt) {
   for (let ci = 0; ci <= chars.length; ci++) {
     const c = ci < chars.length ? chars[ci] : pov ? null : player;
     if (!c || (ci < chars.length && c === player) || !c.alive || (c.team !== my && c.hidden[my])) continue;
+    if (pov && c.team !== my && !losClear(player.x, player.z, c.x, c.z)) continue;
     const [sx, sy, sz] = proj(c.x, pov ? charHeight(c) + 0.3 : 2.0, c.z);
     if (sz > 1 || sx < -60 || sx > VW + 60 || sy < -60 || sy > VH + 60) continue;
     const me = c === player, ally = c.team === my;
@@ -6842,7 +6905,7 @@ let lbToastT = null;
 function lobbyToast(msg) { const t = $('#lbToast'); if (!t) return; t.textContent = msg; t.classList.remove('off'); clearTimeout(lbToastT); lbToastT = setTimeout(() => t.classList.add('off'), 2600); }
 function buildMenu() {
   const mc = $('#optMap'); mc.innerHTML = '';
-  const grads = { oaza: 'linear-gradient(135deg,#f2c27b,#c9763f)', port: 'linear-gradient(135deg,#7fc3e8,#2f6f9a)', sat: 'linear-gradient(135deg,#eef4fa,#8fb3d1)' };
+  const grads = { bazar: 'linear-gradient(135deg,#e8b77a,#9a5a2e)', oaza: 'linear-gradient(135deg,#f2c27b,#c9763f)', port: 'linear-gradient(135deg,#7fc3e8,#2f6f9a)', sat: 'linear-gradient(135deg,#eef4fa,#8fb3d1)' };
   for (const id of MAP_IDS) {
     const D = MAPDEFS[id], b = document.createElement('button');
     b.className = 'chunky map-card'; b.dataset.v = id;
@@ -6881,7 +6944,7 @@ function loadSettings() {
   if (settings.mode !== 3 && settings.mode !== 5) settings.mode = 5;
   if (!DIFFS[settings.diff]) settings.diff = 'normal';
   if (settings.team !== 'atk' && settings.team !== 'def') settings.team = 'atk';
-  if (!MAPDEFS[settings.map]) settings.map = 'oaza';
+  if (!MAPDEFS[settings.map]) settings.map = 'bazar';
   if (!['auto', 'high', 'balanced', 'eco'].includes(settings.gfx)) settings.gfx = 'auto';
   if (settings.fireV !== 2) { settings.autoFire = false; settings.fireV = 2; }
   settings.autoFire = false; // auto-fire is gone: every shot is aimed by the player
@@ -6891,6 +6954,7 @@ function loadSettings() {
   if (!['train', 'custom', 'ranked'].includes(settings.queue)) settings.queue = 'train';
   settings.xh = cleanXh(settings.xh);
   if (settings.camV !== 1) { settings.cam = 'tpp'; settings.camV = 1; }
+  if (settings.mapV !== 2) { settings.map = 'bazar'; settings.mapV = 2; }
   if (!['tpp', 'fpp', 'top'].includes(settings.cam)) settings.cam = 'tpp';
 }
 function saveSettings() { try { localStorage.setItem('blitzsquad.settings', JSON.stringify(Object.assign({}, settings, game.rankedSaved || {}))); } catch (e) { /* storage unavailable */ } }
