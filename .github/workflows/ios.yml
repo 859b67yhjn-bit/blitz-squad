@@ -47,6 +47,7 @@ jobs:
           $PB -c "Set :UIStatusBarHidden true" "$PL" || $PB -c "Add :UIStatusBarHidden bool true" "$PL"
           $PB -c "Set :UIRequiresFullScreen true" "$PL" || $PB -c "Add :UIRequiresFullScreen bool true" "$PL"
           $PB -c "Set :CFBundleDisplayName Blitz Squad" "$PL" || $PB -c "Add :CFBundleDisplayName string Blitz Squad" "$PL"
+          $PB -c "Set :NSLocalNetworkUsageDescription Blitz Squad se conecteaza direct la telefoanele prietenilor pentru meciurile din camera." "$PL" || $PB -c "Add :NSLocalNetworkUsageDescription string Blitz Squad se conecteaza direct la telefoanele prietenilor pentru meciurile din camera." "$PL"
           for f in ios/App/App/Assets.xcassets/AppIcon.appiconset/*.png; do cp resources/icon-1024.png "$f"; done
           for f in ios/App/App/Assets.xcassets/Splash.imageset/*.png; do cp resources/splash-2732.png "$f"; done
 
