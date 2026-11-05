@@ -139,6 +139,8 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .small svg{width:46%;height:46%}
 #reloadBtn{right:calc(max(16px, env(safe-area-inset-right, 0px)) + 1vmin);bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs) + 9vmin)}
 #swapBtn{right:calc(max(16px, env(safe-area-inset-right, 0px)) + var(--fs) + 6vmin + var(--fs)*.11);bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs)*.64 + 7vmin)}
+#knifeBtn{right:calc(max(16px, env(safe-area-inset-right, 0px)) + var(--fs) + 6vmin + var(--fs)*.62);bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs)*.64 + 7vmin)}
+#knifeBtn.on{background:radial-gradient(circle at 50% 32%,#ffe27a,#f2a10c 70%)}
 #actBtn{position:absolute;pointer-events:auto;touch-action:none;right:calc(max(16px, env(safe-area-inset-right, 0px)) + var(--fs)*1.75 + 10vmin);
   bottom:calc(env(safe-area-inset-bottom,0px) + 5vmin);font-family:var(--f-display);font-size:14px;padding:14px 18px;border-radius:16px;
   border:3px solid var(--outline);color:#fff;background:linear-gradient(90deg,rgba(255,255,255,.35) calc(var(--p,0)*100%),transparent 0),linear-gradient(180deg,#ff5d6c,#c3192c);
@@ -802,6 +804,7 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
     <div id="super" class="stick" role="button" aria-label="Super"><div class="knob"></div><span class="lbl">SUPER</span></div>
     <div id="nade" class="stick" role="button" aria-label="Grenadă"><div class="knob"></div><span class="lbl" id="nadeLbl">HE</span></div>
     <button id="reloadBtn" class="small" aria-label="Reîncarcă"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg></button>
+    <button id="knifeBtn" class="small" aria-label="Cuțit"><svg viewBox="0 0 24 24" fill="#fff" stroke="#14100c" stroke-width="1.2" stroke-linejoin="round"><path d="M3.5 20.5l2.2-2.2 1.5 1.5-2.2 2.2z"/><path d="M5.9 16.6l2 2 1.4-1.4-2-2z"/><path d="M8.6 15.1L19.8 4.2c.6 2.8-.6 6.4-3.9 9.6l-5.3 3.3z"/></svg></button>
     <button id="swapBtn" class="small" aria-label="Schimbă arma"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-4-4"/><path d="M20 16H6l4 4"/></svg></button>
     <button id="actBtn" hidden>PLANTEAZĂ</button>
     <button id="scopeBtn" class="small" hidden aria-label="Lunetă"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/><circle cx="12" cy="12" r="1.4" fill="#fff"/></svg><em id="scopeLbl">LUNETĂ</em></button>
@@ -1051,6 +1054,7 @@ const WEAPONS = {
   rifle:    { burst: 3, name: 'Pușcă de asalt', short: 'Asalt', team: 'atk', slot: 0, price: 2700, dmg: 27, rate: 0.1, mag: 30, res: 90, reload: 2.2, range: 48, near: 10, spread: 0.025, moveSpread: 0.05, recoil: 0.012, recoilMax: 0.11, recover: 0.3, speed: 34, pellets: 1, move: 0.95, kill: 300, snd: 'rifle', len: 0.64, pref: 6.5, auto: true },
   carbine:  { burst: 3, name: 'Carabină', short: 'Carabină', team: 'def', slot: 0, price: 2900, dmg: 25, rate: 0.092, mag: 30, res: 90, reload: 2.0, range: 48, near: 10.5, spread: 0.02, moveSpread: 0.045, recoil: 0.01, recoilMax: 0.09, recover: 0.34, speed: 36, pellets: 1, move: 0.96, kill: 300, snd: 'carbine', len: 0.6, pref: 6.5, auto: true },
   sniper:   { burst: 1, name: 'Lunetă', short: 'Lunetă', slot: 0, price: 4750, dmg: 120, rate: 1.35, mag: 5, res: 20, reload: 3.0, range: 75, near: 15, spread: 0.004, moveSpread: 0.14, recoil: 0, recoilMax: 0, recover: 1, speed: 58, pellets: 1, move: 0.86, kill: 100, snd: 'sniper', len: 0.9, pref: 10, release: true },
+  knife:    { burst: 1, name: 'Cuțit', short: 'Cuțit', slot: 2, price: 0, dmg: 40, rate: 0.42, mag: 1, res: 0, reload: 0, range: 1.8, near: 1.8, spread: 0, moveSpread: 0, recoil: 0, recoilMax: 0, recover: 1, speed: 99, pellets: 1, move: 1.16, kill: 1500, snd: 'knife', len: 0.32, pref: 1.2, auto: true, melee: true },
 };
 const ITEMS = {
   armor: { name: 'Vestă', price: 650, st: 'oprește 35% din daune' },
@@ -1083,6 +1087,7 @@ const BOT_NAMES = ['Mihai', 'Ioana', 'Vlad', 'Radu', 'Elena', 'Cristi', 'Bianca'
 const SKINS = [0xffd2a8, 0xf2b98c, 0xd99a6c, 0xffdcc0, 0xc98a5e, 0xf6c9a0];
 const ROUND_TIME = 115, FREEZE_TIME = 10, BOMB_TIME = 35, PLANT_TIME = 3, DEFUSE_TIME = 6, DEFUSE_KIT = 3, WIN_ROUNDS = 5;
 const WALK_MUL = 0.55, RUN_MIN = 1.6, SCOPE_MOVE = 0.55;
+const KNIFE = { reach: 1.8, arc: 0.8, dmg: 40, back: 100 };
 const CHAR_SCALE = 1.18;
 const BASE_SPEED = 2.35, SUPER_DMG = 230, THINK = 0.16, STEP = 1 / 60, NADE_RANGE = 9;
 
@@ -2477,6 +2482,7 @@ function loadAssets(onProgress) {
       ASSETS.arsenal = true;
     }
     ASSETS.ready = true; ASSETS.failed = false;
+    ASSETS.nodes.w_knife = buildKnifeModel();
     return true;
   });
 }
@@ -2551,6 +2557,35 @@ OUTLINE_MAT.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replac
 OUTLINE_MAT.userData.shared = true;
 const OUTLINE_SKIN = new THREE.MeshBasicMaterial({ color: 0x14100c, side: THREE.BackSide, skinning: true });
 OUTLINE_SKIN.onBeforeCompile = OUTLINE_MAT.onBeforeCompile; OUTLINE_SKIN.userData.shared = true;
+
+/* the knife (no Blender model for it): a clip-point steel blade with a fuller, a dark guard and a ribbed rubber grip.
+   Built in the weapon convention: grip at the origin, pointing along +z, up is +y; tilted up like a hammer grip. */
+function buildKnifeModel() {
+  const root = new THREE.Group(); root.name = 'w_knife';
+  const tilt = new THREE.Group(); tilt.rotation.x = -0.52; root.add(tilt);
+  const steel = new THREE.MeshStandardMaterial({ color: 0xd6dde6, metalness: 0.9, roughness: 0.26 }); steel.name = 'KnifeBlade';
+  const dark = new THREE.MeshStandardMaterial({ color: 0x2b2e35, metalness: 0.55, roughness: 0.45 }); dark.name = 'GunMetal';
+  const grip = new THREE.MeshLambertMaterial({ color: 0x24272d }); grip.name = 'GunDark';
+  try { const env = envTexture(); steel.envMap = env; dark.envMap = env; steel.envMapIntensity = 1.1; } catch (e) { /* no environment yet */ }
+  for (const m of [steel, dark, grip]) m.userData.shared = true;
+  // blade profile in (forward, up): straight edge sweeping up to the point, clipped spine
+  const sh = new THREE.Shape();
+  sh.moveTo(0, -0.013); sh.lineTo(0.12, -0.016); sh.quadraticCurveTo(0.19, -0.016, 0.222, 0.008);
+  sh.lineTo(0.17, 0.02); sh.quadraticCurveTo(0.12, 0.026, 0.06, 0.026); sh.lineTo(0, 0.026); sh.closePath();
+  const bg = new THREE.ExtrudeGeometry(sh, { depth: 0.004, bevelEnabled: true, bevelThickness: 0.0035, bevelSize: 0.0035, bevelSegments: 1, curveSegments: 8 });
+  bg.translate(0, 0, -0.002); bg.rotateY(-Math.PI / 2); bg.translate(0, 0, 0.052);
+  const blade = new THREE.Mesh(bg, steel); tilt.add(blade);
+  // fuller: a darker groove along both faces
+  for (const sx of [-1, 1]) { const f = new THREE.Mesh(new THREE.BoxGeometry(0.002, 0.007, 0.105), dark); f.position.set(sx * 0.0058, 0.012, 0.118); tilt.add(f); }
+  const guard = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.064, 0.014), dark); guard.position.set(0, 0.004, 0.045); tilt.add(guard);
+  const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.0155, 0.0175, 0.11, 12), grip); handle.rotation.x = Math.PI / 2; handle.position.set(0, 0.004, -0.017); tilt.add(handle);
+  for (let k = 0; k < 4; k++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.0172, 0.0028, 6, 14), grip); r.position.set(0, 0.004, 0.022 - k * 0.026); tilt.add(r); }
+  const pommel = new THREE.Mesh(new THREE.SphereGeometry(0.019, 12, 8), dark); pommel.scale.set(1, 1, 0.7); pommel.position.set(0, 0.004, -0.075); tilt.add(pommel);
+  const tip = new THREE.Object3D(); tip.name = 'w_knife_muzzle'; tip.position.set(0, 0.008, 0.274); tilt.add(tip);
+  root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; o.geometry.userData.shared = true; } });
+  root.updateMatrixWorld(true);
+  return root;
+}
 
 /* ================= lobby: an arena at dusk with the selected champion on the stage ================= */
 const lobby = { scene: new THREE.Scene(), cam: new THREE.PerspectiveCamera(34, 1, 0.1, 240), model: null, team: null, rotY: -Math.PI / 2 + 0.5, spin: 0, drag: null, t: 0, emoteT: -1, A: {}, party: [null, null, null, null], partyDirty: true, joinFx: {} };
@@ -3032,10 +3067,10 @@ function makeChar(team, agentId, name, isPlayer) {
   chars.push(c);
   return c;
 }
-const curW = (c) => (c.slot === 0 && c.primary ? c.primary : c.secondary);
+const curW = (c) => (c.slot === 2 ? 'knife' : c.slot === 0 && c.primary ? c.primary : c.secondary);
 function resetGear(c) {
   c.primary = null; c.secondary = 'pistol'; c.slot = 1;
-  c.ammo = { pistol: { mag: WEAPONS.pistol.mag, res: WEAPONS.pistol.res } };
+  c.ammo = { pistol: { mag: WEAPONS.pistol.mag, res: WEAPONS.pistol.res }, knife: { mag: 1, res: 0 } };
   c.armor = 0; c.he = 0; c.smoke = 0; c.kit = false;
 }
 function refillAmmo(c) { for (const id in c.ammo) { c.ammo[id].mag = WEAPONS[id].mag; c.ammo[id].res = WEAPONS[id].res; } }
@@ -3050,9 +3085,16 @@ function shotSpread(c, wid) {
   return s;
 }
 function tryFire(c, ang) {
-  if (NET.mode === 'client') { if (c === player) { NET.fireUntil = performance.now() + 120; NET.fireA = ang; c.aim = ang; } return true; }
+  if (NET.mode === 'client') {
+    if (c === player) {
+      NET.fireUntil = performance.now() + 120; NET.fireA = ang; c.aim = ang;
+      if (curW(c) === 'knife' && c.fireCd <= 0 && c.alive) { c.fireCd = WEAPONS.knife.rate; c.lastShotT = game.time; c.slashN = (c.slashN || 0) + 1; Snd.whoosh(c.x, c.z); }
+    }
+    return true;
+  }
   if (!c.alive || game.state !== 'live' || c.reloadT > 0 || c.fireCd > 0 || c.acting || c.dashT > 0 || c.stunT > 0 || c.leapT > 0) return false;
   const wid = curW(c), W = WEAPONS[wid], am = c.ammo[wid];
+  if (W.melee) return knifeAttack(c, ang);
   if (am.mag <= 0) { if (am.res > 0) startReload(c); else if (c.isPlayer) Snd.click(); return false; }
   am.mag--;
   c.fireCd = W.rate * (c.ai ? DIFF.fireMul : 1);
@@ -3073,16 +3115,43 @@ function tryFire(c, ang) {
 function startReload(c) {
   if (NET.mode === 'client') { if (c === player) netAction('r'); return; }
   const wid = curW(c), W = WEAPONS[wid], am = c.ammo[wid];
-  if (c.reloadT > 0 || am.mag >= W.mag || am.res <= 0 || !c.alive) return;
+  if (W.melee || !am || c.reloadT > 0 || am.mag >= W.mag || am.res <= 0 || !c.alive) return;
   c.reloadT = W.reload; c.reloadW = wid; c.burst = 0;
   if (c.isPlayer) Snd.reload();
 }
-function swapWeapon(c) {
-  if (NET.mode === 'client') { if (c === player && c.primary) { netAction('w'); c.slot = c.slot === 0 ? 1 : 0; Snd.swap(); } return; }
-  if (!c.primary || !c.alive) return;
-  c.slot = c.slot === 0 ? 1 : 0; c.reloadT = 0; c.burst = 0; c.recoil = 0;
-  c.fireCd = Math.max(c.fireCd, 0.25);
+/* slots: 0 = main gun, 1 = pistol, 2 = knife. With no target it flips between the two guns (or back from the knife). */
+function swapWeapon(c, to) {
+  const from = c.slot;
+  let s = to === undefined || to === null || to < 0 ? (from === 2 ? (c.primary && c.lastGun !== 1 ? 0 : 1) : c.primary ? (from === 0 ? 1 : 0) : 1) : to;
+  if ((s === 0 && !c.primary) || s === from || !c.alive) return false;
+  if (from !== 2) c.lastGun = from;
+  if (NET.mode === 'client') { if (c === player) { netAction('w', s); c.slot = s; c.reloadT = 0; Snd.swap(); } return true; }
+  c.slot = s; c.reloadT = 0; c.burst = 0; c.recoil = 0;
+  c.fireCd = Math.max(c.fireCd, s === 2 ? 0.12 : 0.25);
   if (c.isPlayer) Snd.swap();
+  return true;
+}
+const toggleKnife = (c) => swapWeapon(c, c.slot === 2 ? (c.primary && c.lastGun !== 1 ? 0 : 1) : 2);
+/* knife: the nearest enemy within reach in front of you; from behind (they look away) it hits two and a half times harder */
+function knifeAttack(c, ang) {
+  const W = WEAPONS.knife;
+  c.fireCd = W.rate; c.lastShotT = game.time; c.aim = ang; c.slashN = (c.slashN || 0) + 1;
+  c.revealT = Math.max(c.revealT, 0.4); if (c.invisT > 0) c.invisT = 0;
+  Snd.whoosh(c.x, c.z); nev('S', 'whoosh', r2(c.x), r2(c.z));
+  let best = null, bd = 1e9;
+  for (const e of chars) {
+    if (!e.alive || e.team === c.team || e.dashT > 0 || e.leapT > 0) continue;
+    const dx = e.x - c.x, dz = e.z - c.z, d = Math.hypot(dx, dz);
+    if (d > KNIFE.reach + e.r || d < 1e-4 || Math.abs(angDiff(Math.atan2(dz, dx), ang)) > KNIFE.arc || !losClear(c.x, c.z, e.x, e.z)) continue;
+    if (d < bd) { bd = d; best = e; }
+  }
+  if (!best) return true;
+  const tx = c.x - best.x, tz = c.z - best.z, tl = Math.hypot(tx, tz) || 1;
+  const back = (Math.cos(best.aim) * tx + Math.sin(best.aim) * tz) / tl < -0.35;
+  damage(best, back ? KNIFE.back : KNIFE.dmg, c, 'knife', false);
+  emit(best.x - (tx / tl) * 0.2, 1.05, best.z - (tz / tl) * 0.2, back ? 12 : 7, best.team, 2.6, 0.35, 0.12);
+  if (back && c === player) announce('ÎN SPATE!', 'fb', 'lovitură de cuțit');
+  return true;
 }
 const tracerLen = (wid) => (wid === 'sniper' ? 2.4 : wid === 'shotgun' ? 0.45 : wid === 'pistol' || wid === 'revolver' ? 0.65 : 0.95);
 /* the streak starts at the barrel and eases onto the real bullet path within ~1.5 m */
@@ -4394,7 +4463,7 @@ setupStick($('#nade'),
   document.addEventListener('mousemove', (e) => { if (!isPOV() || touchMode) return; if (document.pointerLockElement === gl || (e.buttons & 2)) lookBy(e.movementX || 0, e.movementY || 0); });
 })();
 $('#scopeBtn').addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); scopeCycle(); });
-for (const [sel, key] of [['#reloadBtn', 'reload'], ['#swapBtn', 'swap']]) {
+for (const [sel, key] of [['#reloadBtn', 'reload'], ['#swapBtn', 'swap'], ['#knifeBtn', 'knife']]) {
   $(sel).addEventListener('pointerdown', (e) => { e.preventDefault(); input[key] = true; Snd.init(); });
 }
 (function () {
@@ -4442,8 +4511,9 @@ window.addEventListener('keydown', (e) => {
   switch (e.code) {
     case 'KeyR': input.reload = true; break;
     case 'KeyZ': case 'KeyX': scopeCycle(); break;
-    case 'Digit1': if (player.primary && player.slot !== 0) input.swap = true; break;
-    case 'Digit2': if (player.slot !== 1) input.swap = true; break;
+    case 'Digit1': input.swapTo = 0; break;
+    case 'Digit2': input.swapTo = 1; break;
+    case 'Digit3': case 'KeyV': input.swapTo = 2; break;
     case 'KeyF': input.swap = true; break;
     case 'KeyQ': case 'Space': input.superFire = { a: null }; break;
     case 'KeyT': toggleNade(); break;
@@ -4519,13 +4589,14 @@ function povRay() {
 }
 function povAim(p, W) {
   const R = povRay(), t0 = Math.max(0, (p.x - R.cx) * R.dx + (p.z - R.cz) * R.dz);
-  let tx = R.cx + R.dx * (t0 + W.range), tz = R.cz + R.dz * (t0 + W.range), lock = null;
-  for (let t = t0 + 0.35; t < t0 + W.range; t += 0.12) {
+  const far = Math.max(W.range, 14);
+  let tx = R.cx + R.dx * (t0 + far), tz = R.cz + R.dz * (t0 + far), lock = null;
+  for (let t = t0 + 0.35; t < t0 + far; t += 0.12) {
     const x = R.cx + R.dx * t, z = R.cz + R.dz * t, y = R.cy + R.slope * t;
     if (y < 0.02 || y < topAt(x, z)) { tx = x; tz = z; break; }
     let hit = null;
     for (const e of chars) { if (!e.alive || e.team === p.team || e.hidden[p.team]) continue; const ey = y - (e.jumpY || 0); if (d2(x, z, e.x, e.z) < e.r * e.r && ey >= -0.05 && ey <= charHeight(e) * 1.06) { hit = e; break; } }
-    if (hit) { tx = hit.x; tz = hit.z; lock = hit; break; }
+    if (hit) { tx = hit.x; tz = hit.z; if (Math.hypot(hit.x - p.x, hit.z - p.z) <= W.range + hit.r + 0.2) lock = hit; break; }
   }
   p.aimLock = lock;
   return Math.atan2(tz - p.z, tx - p.x);
@@ -4609,6 +4680,8 @@ function updatePlayer(dt) {
   } else { input.fireTap = false; input.fireRelease = null; mouse.released = false; input.nadeThrow = null; input.superFire = null; }
   if (input.reload) { input.reload = false; startReload(p); }
   if (input.swap) { input.swap = false; swapWeapon(p); }
+  if (input.swapTo !== undefined && input.swapTo !== null) { const s = input.swapTo; input.swapTo = null; swapWeapon(p, s); }
+  if (input.knife) { input.knife = false; toggleKnife(p); }
   updateAction(p, dt, (input.act || !!keys.KeyE) && game.state === 'live');
   if (p.acting) { p.wx = 0; p.wz = 0; }
 }
@@ -4691,7 +4764,7 @@ function updateMouseWorld() {
 }
 
 /* ================= first person weapon ================= */
-const VM_LEN = { pistol: 0.36, revolver: 0.4, smg: 0.6, shotgun: 0.74, rifle: 0.8, carbine: 0.78, sniper: 0.95 };
+const VM_LEN = { pistol: 0.36, revolver: 0.4, smg: 0.6, shotgun: 0.74, rifle: 0.8, carbine: 0.78, sniper: 0.95, knife: 0.34 };
 const vm = { scene: new THREE.Scene(), group: new THREE.Group(), wid: null, skin: null, obj: null, kick: 0, bob: 0, lastShot: -9, flash: null };
 (function () {
   vm.scene.add(new THREE.HemisphereLight(0xfff1d6, 0x6d5a45, 0.95));
@@ -4727,6 +4800,13 @@ function syncViewModel(dt) {
   vm.bob += dt * (2 + sp * 7);
   if (p.lastShotT !== vm.lastShot) { vm.lastShot = p.lastShotT; vm.kick = 1; }
   vm.kick = Math.max(0, vm.kick - dt * 10);
+  if (wid === 'knife') {
+    const u = clamp((game.time - p.lastShotT) / 0.3, 0, 1), sw = u < 1 ? Math.sin(u * Math.PI) : 0, dir = (p.slashN || 0) % 2 ? -1 : 1;
+    vm.obj.position.set(0.22 - sw * 0.22 * dir + Math.sin(vm.bob) * 0.014 * sp, -0.13 - Math.abs(Math.cos(vm.bob)) * 0.012 * sp + sw * 0.04, -0.4 - sw * 0.1);
+    vm.obj.rotation.set(0.32 + sw * 0.5, 0.42 + 0.3 * dir * sw, -0.5 + dir * sw * 1.15);
+    if (vm.flash) vm.flash.visible = false;
+    return true;
+  }
   const k = vm.kick, rl = p.reloadT > 0 ? Math.sin(Math.min(1, p.reloadT / WEAPONS[wid].reload) * Math.PI) : 0;
   vm.obj.position.set((pistol ? 0.21 : 0.25) + Math.sin(vm.bob) * 0.012 * sp, (pistol ? -0.21 : -0.25) - Math.abs(Math.cos(vm.bob)) * 0.01 * sp - rl * 0.16 + k * 0.01, -(pistol ? 0.44 : 0.48) - L * 0.22 + k * 0.05);
   vm.obj.rotation.set(k * 0.09 + rl * 0.6, -0.04, rl * 0.3);
@@ -4735,7 +4815,7 @@ function syncViewModel(dt) {
 }
 
 /* ================= mesh sync ================= */
-const _mzv = new THREE.Vector3();
+const _mzv = new THREE.Vector3(), _kq = new THREE.Quaternion(), _kx = new THREE.Vector3(1, 0, 0);
 const rdtOK = (dt) => dt > 0 && dt < 0.2;
 /* squash on start/stop/hit, a small kick when shooting, dust puffs when running */
 function cartoonTick(c, m, dt) {
@@ -4786,7 +4866,13 @@ function syncChars(dt) {
         G.muzzle.getWorldPosition(_mzv); const fx = Math.cos(c.faceR), fz = Math.sin(c.faceR), dx = _mzv.x - c.x, dz = _mzv.z - c.z;
         c.mzF = dx * fx + dz * fz; c.mzR = -dx * fz + dz * fx; c.mzY = _mzv.y;
       }
-      if (G.wObj) { const kick = c.flashT > 0 ? 0.05 : 0; G.wObj.position.z += (-kick - G.wObj.position.z) * Math.min(1, dt * 25); }
+      if (G.wObj) {
+        const kick = c.flashT > 0 ? 0.05 : 0; G.wObj.position.z += (-kick - G.wObj.position.z) * Math.min(1, dt * 25);
+        const ud = G.wObj.userData; if (!ud.q0) ud.q0 = G.wObj.quaternion.clone();
+        const u = curW(c) === 'knife' ? clamp((game.time - c.lastShotT) / 0.28, 0, 1) : 1;
+        if (u < 1) { _kq.setFromAxisAngle(_kx, Math.sin(u * Math.PI) * 1.4 * ((c.slashN || 0) % 2 ? -1 : 1)); G.wObj.quaternion.copy(ud.q0).multiply(_kq); } else if (ud.sw) G.wObj.quaternion.copy(ud.q0);
+        ud.sw = u < 1;
+      }
     } else if (c.alive) {
       const sp = Math.hypot(c.vx, c.vz);
       c.walkPh += dt * sp * 3.2;
@@ -5591,7 +5677,7 @@ const NET = {
   role: 'solo', leader: null, joinConn: null, guests: new Map(), members: [], known: new Set(), cfg: { map: 'oaza', q: 'custom' },
   team: 'atk', readyL: false, status: '', joining: false, lastCard: '',
 };
-const W_IDS = ['pistol', 'revolver', 'smg', 'shotgun', 'rifle', 'sniper', 'carbine'];
+const W_IDS = ['pistol', 'revolver', 'smg', 'shotgun', 'rifle', 'sniper', 'carbine', 'knife'];
 const PRIMARY_W = { smg: 1, shotgun: 1, rifle: 1, sniper: 1, carbine: 1 };
 const r2 = (v) => Math.round((+v || 0) * 100) / 100;
 const r3 = (v) => Math.round((+v || 0) * 1000) / 1000;
@@ -5843,7 +5929,7 @@ function netRemoteControl(c, dt) {
     mx = Math.max(mx, q[0]);
     const t = q[1];
     if (t === 'r') startReload(c);
-    else if (t === 'w') swapWeapon(c);
+    else if (t === 'w') swapWeapon(c, Number.isFinite(+q[2]) ? clamp(q[2] | 0, -1, 2) : -1);
     else if (t === 'u') useSuper(c, fin(q[2], c.aim));
     else if (t === 'n' && (q[2] === 'he' || q[2] === 'smoke')) throwNade(c, q[2], fin(q[3], c.x), fin(q[4], c.z));
     else if (t === 'b' && (WEAPONS[q[2]] || ITEMS[q[2]])) buy(c, q[2]);
@@ -5928,6 +6014,7 @@ function netClientInput(dt) {
   tx(NET.leader, { t: 'I', I: { x: r2(player.wx), z: r2(player.wz), k: player.walk ? 1 : 0, a: r3(firing ? NET.fireA : player.aim), f: firing ? 1 : 0, c: NET.act ? 1 : 0, s: player.scoped ? 1 : 0, v: pv, q: NET.actQ } });
 }
 function setLoadout(c, w) {
+  if (w === 'knife') { c.slot = 2; return; }
   if (PRIMARY_W[w]) { c.primary = w; c.slot = 0; } else { c.secondary = w; c.slot = 1; }
   if (!c.ammo[w]) c.ammo[w] = { mag: WEAPONS[w].mag, res: WEAPONS[w].res };
 }
@@ -5951,7 +6038,7 @@ function applySnap(S) {
   const o = S.O && S.O[player.id];
   if (Array.isArray(o)) {
     player.money = o[0] | 0;
-    player.primary = o[3] >= 0 ? W_IDS[o[3]] || null : null; player.secondary = W_IDS[o[4]] || 'pistol'; player.slot = player.primary ? o[5] | 0 : 1;
+    player.primary = o[3] >= 0 ? W_IDS[o[3]] || null : null; player.secondary = W_IDS[o[4]] || 'pistol'; player.slot = o[5] === 2 ? 2 : player.primary ? o[5] | 0 : 1;
     const w = curW(player); player.ammo[w] = { mag: o[1] | 0, res: o[2] | 0 };
     player.he = o[6] | 0; player.smoke = o[7] | 0; player.kit = !!o[8]; player.superCharge = fin(o[9], 0) / 100;
     player.plantT = fin(o[10], 0); player.defuseT = fin(o[11], 0); player.acting = o[12] === 1 ? 'plant' : o[12] === 2 ? 'defuse' : null;
@@ -6497,8 +6584,8 @@ function updateHUD() {
   show(el.arBox, p.armor > 0); setText(el.arN, String(Math.ceil(p.armor)));
   setText(el.wName, W.name);
   const wsrc = 'icon_' + wid + '.png'; if (el.wImg._s !== wsrc) { el.wImg._s = wsrc; el.wImg.src = wsrc; }
-  setText(el.ammo, p.reloadT > 0 ? 'reîncarc…' : am.mag + ' / ' + am.res);
-  toggleClass(el.ammo, 'low', am.mag <= Math.ceil(W.mag * 0.25));
+  setText(el.ammo, W.melee ? '∞' : p.reloadT > 0 ? 'reîncarc…' : am.mag + ' / ' + am.res);
+  toggleClass(el.ammo, 'low', !W.melee && am.mag <= Math.ceil(W.mag * 0.25));
   setHTML(el.inv, (p.armor > 0 ? '<img class="ii" alt="Vestă" src="icon_armor.png">' : '') + (p.he ? '<img class="ii" alt="Grenadă" src="icon_he.png">' : '') + (p.smoke ? '<img class="ii" alt="Fum" src="icon_smoke.png">' : '') + (p.kit ? '<img class="ii" alt="Kit" src="icon_kit.png">' : '') + (bomb.state === 'carried' && bomb.carrier === p ? '<em class="bomb">BOMBĂ</em>' : ''));
   show(el.buyBtn, game.state === 'freeze' && el.buy.hidden);
   let act = null;
@@ -6516,6 +6603,7 @@ function updateHUD() {
   show(el.nade, p.he + p.smoke > 0 && p.alive);
   setText(el.nadeLbl, nt === 'he' ? 'GRENADĂ' : 'FUM'); toggleClass(el.nade, 'smoke', nt === 'smoke');
   show(el.swap, !!p.primary && p.alive);
+  show($('#knifeBtn'), p.alive); toggleClass($('#knifeBtn'), 'on', wid === 'knife');
   const hn = computeHint(), now = performance.now();
   if (hn !== el.hint._t) { setText(el.hint, hn); el.hint._at = now; el.hint.classList.remove('fade'); }
   else if (hn && now - (el.hint._at || 0) > 4500) toggleClass(el.hint, 'fade', true);
@@ -6985,7 +7073,7 @@ function boot(data) {
   });
 }
 function loadSettingsGuard() { if (!AGENTS[settings.agent]) settings.agent = DEFAULT_AGENT; if (settings.mode !== 3 && settings.mode !== 5) settings.mode = 5; if (!DIFFS[settings.diff]) settings.diff = 'normal'; if (settings.team !== 'atk' && settings.team !== 'def') settings.team = 'atk'; }
-window.__bs = { NET, PN, RL, netJoinCode, inviteFriend, answerInvite, netHostStart, startRoomMatch, openRoom, profile_: () => profile, myCard, setMemberTeam, leaveRoom, lobby, scopeCycle, topAt, shotSpread, drawXh, xhCfg, renderShop, bombDef, myBombKey, game, chars, bomb, settings, simStep, startMatch, enterGame, findPath, get player() { return player; }, get touchMode() { return touchMode; }, setFF(v) { fastForward = v; }, botify() { if (player) player.ai = makeAI(); }, MW, MH, grid, siteTiles, cam, camera, scene, renderer, ASSETS, buildWorld, world, useSuper, turrets, profile, NET, AGENTS, buildCharMesh, disposeCharMesh, input, startAttack, autoTarget, endMatch, rankOf, lobbyConfetti, view, vm, charHeight, updateCamera, mouse, get MAP() { return MAP; } };
+window.__bs = { NET, PN, RL, buildKnifeModel, toggleKnife, swapWeapon, netJoinCode, inviteFriend, answerInvite, netHostStart, startRoomMatch, openRoom, profile_: () => profile, myCard, setMemberTeam, leaveRoom, lobby, scopeCycle, topAt, shotSpread, drawXh, xhCfg, renderShop, bombDef, myBombKey, game, chars, bomb, settings, simStep, startMatch, enterGame, findPath, get player() { return player; }, get touchMode() { return touchMode; }, setFF(v) { fastForward = v; }, botify() { if (player) player.ai = makeAI(); }, MW, MH, grid, siteTiles, cam, camera, scene, renderer, ASSETS, buildWorld, world, useSuper, turrets, profile, NET, AGENTS, buildCharMesh, disposeCharMesh, input, startAttack, autoTarget, endMatch, rankOf, lobbyConfetti, view, vm, charHeight, updateCamera, mouse, get MAP() { return MAP; } };
 const hot = window.claude && window.claude.hot;
 try { if (hot && hot.snapshot) hot.snapshot(() => ({ settings: Object.assign({}, settings) })); } catch (e) { /* no hot reload */ }
 if (hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});
