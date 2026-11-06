@@ -948,6 +948,279 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
 .lbs-tag b{font-size:12px}
 /* every panel and pop-up a size smaller */
 .screen > .wrap,.bm-wrap,#invPop,#hudEd .he-bar,#hudEd .he-sel,#hudEd .he-hint{zoom:.86}
+
+/* ================= menus: every menu is a full page that slides in over the lobby =================
+   Opaque, with a slow animated backdrop (drifting stripes and two coloured glows), a top bar with the back arrow
+   and the title, and a scrolling body whose cards pop in one after another when the page opens. */
+.screen.page{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;padding:0;overflow:hidden;touch-action:none;isolation:isolate;z-index:12;
+  --pg-a:rgba(255,122,61,.30);--pg-b:rgba(61,139,255,.34);
+  background:radial-gradient(130% 95% at 50% 0%,#26387a 0%,#151e48 48%,#0a0f28 100%)}
+.page::before{content:"";position:absolute;left:-80px;top:0;width:calc(100% + 160px);height:100%;z-index:-1;pointer-events:none;will-change:transform;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 22px,transparent 22px 56px);animation:pgdrift 16s linear infinite}
+@keyframes pgdrift{to{transform:translate3d(79.196px,0,0)}}
+.page::after{content:"";position:absolute;inset:-6%;z-index:-1;pointer-events:none;will-change:transform;
+  background:radial-gradient(44vmax 32vmax at 8% 10%,var(--pg-a),transparent 70%),radial-gradient(48vmax 36vmax at 96% 98%,var(--pg-b),transparent 70%);
+  animation:pgglow 9s ease-in-out infinite alternate}
+@keyframes pgglow{to{transform:translate3d(2%,-3%,0) scale(1.06)}}
+/* pages opened from other pages sit above them: settings over the pause page, the crosshair editor over settings */
+#setPage.page{z-index:14} #xhEd.page{z-index:15} #rankPanel.page{z-index:13}
+.pg-shop{--pg-a:rgba(255,200,58,.34);--pg-b:rgba(255,106,61,.30)}
+.pg-champs{--pg-a:rgba(99,169,255,.36);--pg-b:rgba(176,92,255,.30)}
+.pg-rank{--pg-a:rgba(176,92,255,.42);--pg-b:rgba(255,200,58,.22)}
+.pg-friends{--pg-a:rgba(73,216,107,.28);--pg-b:rgba(61,139,255,.34)}
+.pg-set,.pg-xh{--pg-a:rgba(61,214,255,.26);--pg-b:rgba(61,139,255,.30)}
+.pg-pause{--pg-a:rgba(61,139,255,.26);--pg-b:rgba(255,122,61,.22)}
+.pg-end.win{--pg-a:rgba(255,200,58,.42);--pg-b:rgba(73,216,107,.26)}
+.pg-end.lose{--pg-a:rgba(255,77,94,.36);--pg-b:rgba(61,139,255,.24)}
+/* opening and closing */
+.page.pg-enter{animation:pgin .38s cubic-bezier(.16,.9,.3,1) both}
+.page.pg-out{animation:pgout .2s ease-in both;pointer-events:none}
+@keyframes pgin{from{opacity:0;transform:translate3d(8%,0,0)}}
+@keyframes pgout{to{opacity:0;transform:translate3d(6%,0,0)}}
+.pg-enter .pg-title{animation:pgtitle .55s cubic-bezier(.2,1.4,.4,1) both .06s}
+@keyframes pgtitle{from{opacity:0;transform:translate3d(-16px,0,0)}}
+.pg-enter .stg > *{animation:pgitem .5s cubic-bezier(.2,1.3,.4,1) both;animation-delay:calc(var(--i,0) * 50ms + 100ms)}
+@keyframes pgitem{from{opacity:0;transform:translate3d(0,18px,0) scale(.94)}}
+.stg > :nth-child(2){--i:1}.stg > :nth-child(3){--i:2}.stg > :nth-child(4){--i:3}.stg > :nth-child(5){--i:4}.stg > :nth-child(6){--i:5}
+.stg > :nth-child(7){--i:6}.stg > :nth-child(8){--i:7}.stg > :nth-child(9){--i:8}.stg > :nth-child(10){--i:9}.stg > :nth-child(n+11){--i:10}
+/* top bar */
+.pg-top{position:relative;flex:none;display:flex;align-items:center;gap:12px;min-height:50px;
+  padding:calc(env(safe-area-inset-top,0px) + 7px) max(16px,env(safe-area-inset-right,0px)) 7px max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(180deg,rgba(4,7,20,.78),rgba(4,7,20,.42));border-bottom:3px solid rgba(0,0,0,.4);box-shadow:0 2px 0 rgba(255,255,255,.06)}
+.pg-back{flex:none;width:48px;height:42px;border-radius:14px;border:3px solid var(--outline);display:grid;place-items:center;padding:0;cursor:pointer;
+  background:linear-gradient(180deg,#ffe66b 0 45%,#ffc21a 46%,#f0a500);box-shadow:0 4px 0 #a86a00,0 6px 0 rgba(0,0,0,.3);transition:transform .08s,box-shadow .08s}
+.pg-back:active{transform:translateY(3px);box-shadow:0 1px 0 #a86a00}
+.pg-back svg{width:24px;height:24px;animation:backnudge 3.6s ease-in-out infinite}
+@keyframes backnudge{0%,82%,100%{transform:none}88%{transform:translateX(-4px)}94%{transform:translateX(1px)}}
+.pg-title{display:flex;flex-direction:column;gap:2px;min-width:0;line-height:1}
+.pg-title small{font-size:9.5px;font-weight:800;letter-spacing:.16em;color:#a6b5e6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-title b{font-family:var(--f-display);font-weight:400;font-size:clamp(18px,4.6vmin,25px);text-shadow:var(--ts);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em}
+.pg-top > .pg-title + *{margin-left:auto}
+.pg-coins,.pg-cnt{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 8px;border-radius:12px;border:3px solid var(--outline);background:linear-gradient(180deg,rgba(44,54,90,.95),rgba(20,27,48,.95));
+  font-family:var(--f-display);font-size:15px;color:var(--gold);text-shadow:var(--ts-s);box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.pg-cnt{color:#dfe6ff;padding:4px 12px}
+.pg-coins .ic-coin{width:18px;height:18px}
+/* body, cards, tabs */
+.pg-body{position:relative;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain;
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 14px) max(16px,env(safe-area-inset-left,0px))}
+.pg-card{background:linear-gradient(180deg,rgba(42,56,104,.80),rgba(18,25,54,.88));border:3px solid var(--outline);border-radius:18px;box-shadow:0 5px 0 rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.08);padding:10px 12px;min-width:0}
+.pg-card h2,.ms-block h2{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-family:var(--f-display);font-weight:400;font-size:12px;letter-spacing:.08em;color:#d3dcff;text-shadow:var(--ts-s)}
+.ms-block h2 em{font-style:normal;font-family:var(--f-body);font-weight:800;font-size:10px;letter-spacing:.02em;color:#ffd98a;text-transform:none}
+.pg-tabs{display:flex;gap:4px;padding:3px;border-radius:14px;border:3px solid var(--outline);background:rgba(8,12,30,.82);box-shadow:0 3px 0 rgba(0,0,0,.35);min-width:0}
+.pg-tabs button{position:relative;flex:1 1 auto;border:0;border-radius:10px;background:none;padding:6px 12px;font-family:var(--f-display);font-size:12px;color:#c9d1ea;text-shadow:var(--ts-s);white-space:nowrap;
+  transition:background .25s,color .25s,transform .1s;line-height:1.05;cursor:pointer}
+.pg-tabs button small{display:block;font-family:var(--f-body);font-weight:800;font-size:9px;letter-spacing:.03em;color:#8e9ac0;margin-top:2px;text-shadow:none}
+.pg-tabs button.on{color:#fff;background:linear-gradient(180deg,#ffd34d,#f0a500);box-shadow:inset 0 -3px 0 rgba(0,0,0,.22);animation:tabon .3s cubic-bezier(.2,1.6,.4,1)}
+.pg-tabs button.on small{color:#5a3a00}
+.pg-tabs button[data-v="custom"].on{background:linear-gradient(180deg,#72e58e,#22a046)} .pg-tabs button[data-v="custom"].on small{color:#0b3a17}
+.pg-tabs button[data-v="ranked"].on{background:linear-gradient(180deg,#cf8cff,#7a2fd8)} .pg-tabs button[data-v="ranked"].on small{color:#f1e4ff}
+.pg-tabs button:active{transform:scale(.94)}
+.pg-tabs button:disabled{opacity:.38;cursor:default}
+@keyframes tabon{from{transform:scale(.86)}}
+.pg-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:4px}
+.pg-foot .play{width:auto;min-width:190px}
+.page .chunky{transition:transform .08s,background .2s}
+.page .seg button.on{animation:tabon .3s cubic-bezier(.2,1.6,.4,1)}
+/* ---------- game mode page ---------- */
+.mode-page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+.ms-modes{display:flex;flex-direction:column;gap:10px}
+.gm-card{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:4px 10px;width:100%;min-height:84px;text-align:left;padding:6px 14px 6px 6px;
+  border-radius:18px;border:3px solid var(--outline);color:#fff;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  background:linear-gradient(120deg,var(--c1) 0%,var(--c2) 100%);box-shadow:0 5px 0 rgba(0,0,0,.42),inset 0 3px 0 rgba(255,255,255,.24),inset 0 -5px 0 rgba(0,0,0,.18);transition:transform .12s,filter .25s,box-shadow .25s}
+.gm-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(-55deg,rgba(255,255,255,.08) 0 10px,transparent 10px 24px)}
+.gm-card:active{transform:scale(.97)}
+.gm-card.b5{--c1:#ff9a5a;--c2:#c42f1c} .gm-card.b3{--c1:#5cb2ff;--c2:#1f45c0} .gm-card.dm{--c1:#c47fff;--c2:#5a1fb4}
+.gm-card:not(.on){filter:saturate(.72) brightness(.86)}
+.gm-card.on{box-shadow:0 5px 0 rgba(0,0,0,.42),0 0 0 3px #fff,0 0 26px 6px rgba(255,232,140,.45),inset 0 3px 0 rgba(255,255,255,.24)}
+.gm-card.on::after{content:"";position:absolute;top:-30%;bottom:-30%;width:28%;left:-40%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-18deg);animation:shine 3s ease-in-out infinite}
+.gm-card.locked{filter:grayscale(.9) brightness(.62);cursor:default}
+.gm-art{position:relative;width:96px;height:64px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35));overflow:visible}
+.gm-t{position:relative;display:flex;flex-direction:column;gap:3px;min-width:0}
+.gm-t b{font-family:var(--f-display);font-weight:400;font-size:18px;line-height:1;text-shadow:var(--ts)}
+.gm-t small{font-size:10.5px;font-weight:700;line-height:1.3;color:rgba(255,255,255,.94);text-shadow:0 1px 0 rgba(0,0,0,.4)}
+.gm-lock{display:none;align-self:flex-start;font-style:normal;font-size:10px;font-weight:900;padding:2px 8px;border-radius:999px;background:rgba(0,0,0,.45)}
+.gm-card.locked .gm-lock{display:inline-block}
+.gm-ok{position:absolute;top:7px;right:9px;width:24px;height:24px;border-radius:50%;border:3px solid var(--outline);background:#4dff7a;display:none;place-items:center}
+.gm-ok::after{content:"";width:9px;height:5px;border-left:3px solid #0b3a17;border-bottom:3px solid #0b3a17;transform:translateY(-2px) rotate(-45deg)}
+.gm-card.on .gm-ok{display:grid;animation:okpop .4s cubic-bezier(.2,1.9,.4,1)}
+@keyframes okpop{from{transform:scale(0) rotate(-40deg)}}
+.gm-led{animation:gmled 1s steps(1) infinite}
+@keyframes gmled{50%{fill:#5c1212}}
+.gm-float{transform-box:view-box;transform-origin:60px 46px}
+.gm-card.on .gm-float{animation:gmfloat 2.2s ease-in-out infinite}
+@keyframes gmfloat{50%{transform:translateY(-3px) rotate(-2.5deg)}}
+.gm-card.on .gm-num{animation:gmnum 1s steps(1) infinite}
+@keyframes gmnum{50%{fill:#c8ffd0}}
+.gm-bolt{transform-box:fill-box;transform-origin:center;animation:gmbolt 1.3s ease-in-out infinite}
+@keyframes gmbolt{0%,100%{transform:none}50%{transform:scale(1.16) rotate(9deg)}}
+.gm-rot{transform-box:view-box;transform-origin:60px 40px;animation:gmrot 8s linear infinite}
+.gm-card.on .gm-rot{animation-duration:3.4s}
+@keyframes gmrot{to{transform:rotate(360deg)}}
+.gm-core{transform-box:fill-box;transform-origin:center;animation:gmcore 1.2s ease-in-out infinite}
+@keyframes gmcore{50%{transform:scale(1.4)}}
+.gm-dot{transform-box:fill-box;transform-origin:center;animation:gmdot 2.4s ease-in-out infinite}
+.gm-dot.d2{animation-delay:.6s}.gm-dot.d3{animation-delay:1.2s}.gm-dot.d4{animation-delay:1.8s}
+@keyframes gmdot{0%,100%{transform:none}35%{transform:scale(1.45)}55%{transform:scale(.7);opacity:.5}}
+.ms-side{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 12px;align-content:start;min-width:0}
+.ms-side > .ms-rank,.ms-side > .ms-map,.ms-side > .ms-note,.ms-side > .pg-foot,.ms-side > .solo{grid-column:1 / -1}
+.ms-block{min-width:0}
+.mode-page .map-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.mode-page .map-card{position:relative;border-radius:14px;overflow:hidden}
+.mode-page .map-card .img{aspect-ratio:16/11;border-bottom:0;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.mode-page .map-card > span{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 5px;background:linear-gradient(180deg,transparent,rgba(8,10,24,.92))}
+.mode-page .map-card b{font-size:11px;text-shadow:var(--ts-s)}
+.mode-page .map-card small{display:none}
+.mode-page .map-card.on{box-shadow:0 4px 0 rgba(0,0,0,.35),0 0 0 3px var(--gold),0 0 16px 2px rgba(255,200,58,.45)}
+.mode-page .map-card.on .img{transform:scale(1.1)}
+.map-cards.dis{pointer-events:none;opacity:.42;filter:grayscale(.7)}
+.mode-page .seg button{padding:7px 8px;font-size:13px}
+.mode-page .seg small{font-size:9.5px}
+.ms-note{margin:0;min-height:0}
+.ms-note:empty{display:none}
+.ms-rank{display:flex;align-items:center;gap:12px;padding:8px 12px;background:radial-gradient(circle at 15% 30%,#7d3fe0,#3b1a7a 62%,#1f0f45)}
+.ms-rank .rb{flex:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
+.ms-rank .rk-t{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.ms-rank .rk-t small{font-family:var(--f-display);font-size:10px;letter-spacing:.06em;color:#e6d6ff;text-shadow:var(--ts-s)}
+.ms-rank .rk-t b{font-family:var(--f-display);font-weight:400;font-size:17px;text-shadow:var(--ts)}
+.ms-rank .chunky{flex:none;padding:7px 11px;font-size:12px}
+#msPlay.ranked{background:linear-gradient(180deg,#dca2ff 0 45%,#a255ff 46%,#7330d6);box-shadow:0 6px 0 #45168c,0 9px 0 rgba(0,0,0,.35)}
+#msPlay{position:relative;overflow:hidden}
+#msPlay::after{content:"";position:absolute;top:-20%;bottom:-20%;width:34%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:shine 3.2s ease-in-out infinite}
+/* ---------- settings ---------- */
+.set-page{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px;align-content:start;align-items:start}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.set-row > span,.set-sl > span{font-size:13px;font-weight:800;color:#e6ecff}
+.seg.mini{flex:0 0 auto;gap:6px}
+.seg.mini button{flex:0 0 auto;padding:6px 14px;font-size:13px}
+.set-sl{display:grid;grid-template-columns:104px minmax(0,1fr) 42px;align-items:center;gap:10px;margin:6px 0}
+.set-sl b{font-family:var(--f-display);font-weight:400;font-size:14px;text-align:right;color:var(--gold);text-shadow:var(--ts-s)}
+.set-sl input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:99px;border:2.5px solid var(--outline);outline:none;margin:0;
+  background:linear-gradient(90deg,#ffc21a var(--v,50%),#10162a var(--v,50%))}
+.set-sl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#fff3b0,#ffc21a 60%);border:3px solid var(--outline);box-shadow:0 2px 0 rgba(0,0,0,.4)}
+.set-sl input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--gold);border:3px solid var(--outline)}
+.set-hint{margin:4px 0 0;font-size:10.5px;font-weight:700;color:#a9b4d6;line-height:1.35}
+.set-card .seg button{padding:7px 10px;font-size:13px}
+.set-card .xe-mini .chunky,.set-card .hud-mini > .chunky{padding:8px 12px;font-size:13px}
+.set-help .help{font-size:11px}
+.set-help .help + .help{margin-top:6px}
+/* ---------- shop, champions, room, competitive, crosshair ---------- */
+.shop-page{display:flex;flex-direction:column;gap:12px}
+.shop-tabs{align-self:flex-start;max-width:100%;overflow-x:auto}
+.shop-page .shop-body{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.shop-page .offer{transition:transform .12s}
+.shop-page .offer:active{transform:scale(.98)}
+.shop-page .offer .art img{transition:transform .4s cubic-bezier(.2,1.4,.4,1)}
+.pg-enter .shop-page .offer .art img{animation:artin .7s cubic-bezier(.2,1.4,.4,1) both .25s}
+@keyframes artin{from{transform:scale(.6) translateY(14px);opacity:0}}
+.champs-page .ch-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px}
+.champs-page .ch-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+.champs-page .ch-detail{background:linear-gradient(180deg,rgba(42,56,104,.82),rgba(18,25,54,.9));border-width:3px;border-radius:18px;box-shadow:0 5px 0 rgba(0,0,0,.35);animation:pgitem .4s cubic-bezier(.2,1.3,.4,1) both}
+.ch-help{margin-top:12px}
+.room-page .rm-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px}
+.room-page .rm-ctl .seg button{padding:6px 10px;font-size:12px}
+.room-page .rm-ctl .row > span b{color:#fff}
+.pg-top .rm-net{font-size:11px;font-weight:800;color:var(--muted);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.pg-top #rmGo:empty{display:none}
+.pg-top .rm-go{width:auto;font-size:15px;padding:7px 16px;border-width:3px}
+.rank-page{max-width:820px;width:100%;margin:0 auto}
+.rank-page .pg-foot{justify-content:center;margin-top:10px}
+.rank-page #rkPlay{width:auto;min-width:240px}
+.xh-page .xe-grid{max-width:860px;margin:0 auto}
+.xh-page .xe-prev{height:min(240px,52vh)}
+/* ---------- pause ---------- */
+.pause-page{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px;align-items:start;max-width:920px;width:100%;margin:0 auto}
+.pz-menu{display:flex;flex-direction:column;gap:9px}
+#resumeBtn{font-size:22px;padding:11px 14px}
+.pz-btn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:7px 12px 7px 8px;border-radius:16px;border:3px solid var(--outline);cursor:pointer;
+  background:linear-gradient(180deg,#36467e,#1c2552);box-shadow:0 4px 0 rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.12);font-family:var(--f-display);font-size:15px;color:#fff;text-shadow:var(--ts-s);transition:transform .08s}
+.pz-btn:active{transform:translateY(2px)}
+.pz-btn i{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:rgba(0,0,0,.28);flex:none}
+.pz-btn i svg{width:24px;height:24px}
+.pz-btn span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pz-btn small{font-family:var(--f-body);font-size:10.5px;font-weight:700;color:#aeb9dc;text-shadow:none}
+.pz-btn.quit{background:linear-gradient(180deg,#5c2c3d,#341624)}
+.pz-board{min-width:0;overflow-x:auto}
+.pz-board table.stats td,.pz-board table.stats th{padding:3px 6px}
+/* ---------- end of the match ---------- */
+.end-page{display:flex;flex-direction:column;align-items:center;gap:10px;max-width:760px;width:100%;margin:0 auto}
+.end-page > *,.shop-page > *{flex-shrink:0}
+.end-head{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%}
+.end-head .bigt{font-size:clamp(34px,9vmin,58px)}
+.pg-enter .end-head .bigt{animation:endpop .7s cubic-bezier(.2,1.7,.4,1) both .1s}
+@keyframes endpop{from{opacity:0;transform:scale(.3) rotate(-6deg)}}
+.end-head .rewards{margin:4px 0 2px}
+.end-table{width:100%;overflow-x:auto;padding:6px 8px}
+.end-btns{width:100%;max-width:560px}
+.end-place{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-display);font-size:18px;text-shadow:var(--ts-s)}
+/* ---------- lobby: settings gear, returning from a page, idle motion ---------- */
+.lb-gear{width:34px;height:34px;padding:0;border-radius:11px;border:2.5px solid var(--outline);display:grid;place-items:center;cursor:pointer;
+  background:linear-gradient(180deg,rgba(44,54,90,.95),rgba(20,27,48,.95));box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.lb-gear svg{width:22px;height:22px;transition:transform .5s cubic-bezier(.2,1.4,.4,1)}
+.lb-gear:active svg{transform:rotate(90deg)}
+.lb-tile{animation:tilebob 3.4s ease-in-out infinite}
+.lb-tile:nth-child(2){animation-delay:-1.1s}.lb-tile:nth-child(3){animation-delay:-2.2s}
+@keyframes tilebob{0%,100%{translate:0 0}50%{translate:0 -3px}}
+#menu.lb-in .lb-left{animation:lbinL .5s cubic-bezier(.2,1.3,.4,1) both}
+#menu.lb-in .lb-right{animation:lbinR .5s cubic-bezier(.2,1.3,.4,1) both .04s}
+#menu.lb-in .lb-me,#menu.lb-in .lb-bar,#menu.lb-in .lb-name{animation:lbinT .42s ease-out both}
+@keyframes lbinL{from{opacity:0;translate:-34px 0}}
+@keyframes lbinR{from{opacity:0;translate:34px 0}}
+@keyframes lbinT{from{opacity:0;translate:0 -14px}}
+.lb-mode{transition:transform .12s}
+.lb-mode::after{content:"";position:absolute;top:-30%;bottom:-30%;width:26%;left:-45%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg);animation:shine 4.6s ease-in-out infinite 1.2s}
+.lb-mode .gm-chip{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:7px;border:2px solid var(--outline);font-size:10px;vertical-align:2px;background:#ff7a3d;color:#fff}
+.lb-mode .gm-chip.dm{background:#9b4dff}
+/* phones held sideways: everything a size smaller; portrait: one column */
+@media (max-height:440px) and (orientation:landscape){
+  .pg-top{min-height:44px;padding-top:calc(env(safe-area-inset-top,0px) + 5px);padding-bottom:5px}
+  .pg-back{width:44px;height:38px}
+  .pg-body{padding-top:9px}
+  .gm-card{min-height:76px}
+  .gm-art{width:84px;height:56px}
+  .gm-t b{font-size:16px}
+  .gm-t small{font-size:10px}
+  .ms-modes{gap:8px}
+  .mode-page .seg small{display:none}
+  .pz-btn{padding:5px 10px 5px 6px;font-size:14px}
+  #resumeBtn{font-size:19px;padding:9px 12px}
+}
+@media (orientation:portrait){
+  .pg-top{flex-wrap:wrap;row-gap:6px}
+  .pg-top .ms-q{order:9;flex-basis:100%}
+  .mode-page,.pause-page,.champs-page .ch-layout,.room-page .rm-grid{grid-template-columns:minmax(0,1fr)}
+  .mode-page .map-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ms-side{grid-template-columns:minmax(0,1fr)}
+  .pg-foot .play{flex:1}
+}
+@media (prefers-reduced-motion:reduce){
+  .page::before,.page::after,.lb-tile,.gm-card *,.gm-card::after,.pg-back svg,.lb-mode::after{animation:none!important}
+}
+
+/* ---------- deathmatch HUD: your kills against the leader's, the gun strip ---------- */
+#scorebox.dm .side.atk{background:linear-gradient(180deg,#5aa2ff,#1b4fb8)}
+#scorebox.dm .side.def{background:linear-gradient(180deg,#ff6d5a,#b8301f)}
+#scorebox.dm .alive{display:none}
+#dmPick{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 64px);transform:translateX(-50%);z-index:6;pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:7px 10px 8px;border-radius:18px;border:3px solid var(--outline);background:linear-gradient(180deg,rgba(40,52,92,.96),rgba(16,22,42,.96));box-shadow:0 5px 0 rgba(0,0,0,.4);max-width:calc(100vw - 20px);
+  animation:dmpin .3s cubic-bezier(.2,1.5,.4,1)}
+@keyframes dmpin{from{opacity:0;transform:translate(-50%,16px) scale(.92)}}
+.dmp-h{display:flex;align-items:center;gap:10px;width:100%;justify-content:center;position:relative}
+.dmp-h b{font-family:var(--f-display);font-weight:400;font-size:13px;letter-spacing:.06em;text-shadow:var(--ts-s)}
+.dmp-x{position:absolute;right:-2px;top:-3px;width:26px;height:26px;padding:0;border-radius:9px;border:2px solid var(--outline);background:#2b3352;font-weight:900;font-size:12px}
+.dmp-row{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;max-width:100%}
+.dmp-w{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:74px;height:52px;padding:3px 4px;border-radius:12px;border:2.5px solid var(--outline);
+  background:linear-gradient(180deg,#2e3a64,#1a2240);box-shadow:0 3px 0 rgba(0,0,0,.4);flex:none;transition:transform .08s}
+.dmp-w:active{transform:scale(.94)}
+.dmp-w img{height:22px;max-width:100%;object-fit:contain;filter:drop-shadow(0 2px 0 rgba(0,0,0,.4))}
+.dmp-w span{font-family:var(--f-display);font-size:9.5px;text-shadow:var(--ts-s);white-space:nowrap}
+.dmp-w.on{background:linear-gradient(180deg,#ffe07a,#f0a90f);box-shadow:0 3px 0 #9c6a06}
+.dmp-w.on span{color:#2a1a00;text-shadow:none}
+.dmp-row.sec .dmp-w{width:84px;height:40px;flex-direction:row;gap:6px}
+.dmp-row.sec .dmp-w img{height:18px}
+.dmp-n{font-size:10.5px;font-weight:700;color:#c9d3f0;text-align:center}
+table.stats b.pl{display:inline-grid;place-items:center;min-width:18px;height:18px;margin-right:6px;border-radius:6px;background:#2b3352;font-family:var(--f-display);font-weight:400;font-size:11px;color:#fff}
+table.stats tr:first-child + tr b.pl{background:linear-gradient(180deg,#ffe07a,#f0a90f);color:#2a1a00}
+@media (orientation:portrait){#dmPick{bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs)*1.75 + 22vmin)}}
 </style>
 
 <div id="app">
@@ -999,6 +1272,7 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
     </div>
     <button id="buyBtn" hidden>ARSENAL</button>
     <div id="center"></div>
+    <div id="dmPick" hidden><div class="dmp-h"><b>ALEGE ARMA</b><button id="dmpX" class="dmp-x" aria-label="Închide">&#x2715;</button></div><div class="dmp-row" id="dmpP"></div><div class="dmp-row sec" id="dmpS"></div><small class="dmp-n" id="dmpN"></small></div>
     <div id="toast" class="off"></div>
     <div id="announce" class="ann" hidden></div>
     <div id="hint"></div>
@@ -1023,12 +1297,12 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
       <button id="champsBtn" class="lb-tile champs"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5c-9 0-15 7-15 16v16l15 6 15-6V21c0-9-6-16-15-16z" fill="#2b303d" stroke="#14100c" stroke-width="3" stroke-linejoin="round"/><path d="M14 22h20v6H14z" fill="#ffd2a8"/><path d="M17 25h5M26 25h5" stroke="#eafcff" stroke-width="2.5" stroke-linecap="round"/><path d="M14 28h20v6l-10 4-10-4z" fill="#16191f"/></svg><span>CAMPIONI</span></button>
     </nav>
     <div class="lb-me"><span class="av" id="lbAv"></span><span class="lvl"><span id="lbLvl">1</span></span><div><b id="lbNick">Jucător</b><div class="road"><i><s id="lbRoad"></s></i><em id="lbRoadT">0/100</em></div></div><span class="rk" id="lbRank"></span></div>
-    <div class="lb-bar"><span class="pill"><i class="ic-coin"></i><b id="lbCoins">0</b><span class="plus" id="lbPlus">+</span></span><span class="pill"><i class="ic-tr"></i><b id="lbTroph">0</b></span></div>
+    <div class="lb-bar"><span class="pill"><i class="ic-coin"></i><b id="lbCoins">0</b><span class="plus" id="lbPlus">+</span></span><span class="pill"><i class="ic-tr"></i><b id="lbTroph">0</b></span><button id="setBtn" class="lb-gear" aria-label="Setări"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 2.5h3.4l.5 2.6 1.6.9 2.5-.9 1.7 2.9-2 1.8v1.9l2 1.8-1.7 2.9-2.5-.9-1.6.9-.5 2.6h-3.4l-.5-2.6-1.6-.9-2.5.9-1.7-2.9 2-1.8v-1.9l-2-1.8 1.7-2.9 2.5.9 1.6-.9z" fill="#fff4e0" stroke="#14100c" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="#ffc83a" stroke="#14100c" stroke-width="1.8"/></svg></button></div>
     <div id="lbToast" class="off"></div>
     <div class="lb-name"><b id="lbName">YOUMU</b><span><span id="lbRole">Asasin</span><em class="rar" id="lbRar">RARE</em><span class="lb-chtr"><i class="ic-tr"></i><b id="lbChTr">0</b></span></span></div>
     <div class="lb-right">
-      <div class="lb-queue" id="queueSw"><button data-v="train">ANTRENAMENT</button><button data-v="custom">CUSTOM</button><button data-v="ranked">RANKED</button></div>
-      <button id="modeBtn" class="lb-mode"><small>MOD DE JOC</small><b id="modeMap">BOMBĂ · OAZA</b><span id="modeInfo">5 vs 5 · Atac · Normal</span></button>
+      <div class="lb-queue" id="queueSw"><button data-v="train">ANTRENAMENT</button><button data-v="custom">CUSTOM</button><button data-v="ranked">COMPETITIV</button></div>
+      <button id="modeBtn" class="lb-mode"><small>MOD DE JOC</small><b id="modeMap">BOMBĂ · BAZARUL</b><span id="modeInfo">5 vs 5 · Atac · Normal</span></button>
       <button id="playBtn" class="play">JOACĂ</button>
     </div>
     <div id="lbSlots"></div>
@@ -1036,28 +1310,39 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
     <div id="loadInfo" class="lb-load">Se încarcă modelele 3D <b id="loadPct">0%</b><i><s id="loadBar"></s></i></div>
   </div>
 
-  <div id="shop" class="screen" hidden>
-    <div class="wrap panel">
-      <div class="ph"><span class="t">Magazin</span><span class="shop-head-coins"><i class="ic-coin"></i><b id="shopCoins">0</b></span><button class="chunky closeBtn" data-close="shop">Închide</button></div>
-      <div class="seg shop-tabs" id="shopTabs"><button class="chunky on" data-v="offers">Oferte</button><button class="chunky" data-v="champs">Campioni</button><button class="chunky" data-v="skins">Skinuri arme</button><button class="chunky" data-v="bomb">Bombă C4</button></div>
-      <div class="shop-body" id="shopBody"></div>
+  <div id="shop" class="screen page pg-shop" hidden>
+    <header class="pg-top">
+      <button class="pg-back closeBtn" data-close="shop" aria-label="Înapoi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="#2a1a00" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="pg-title"><small>MONEDE, CAMPIONI ȘI SKINURI</small><b>MAGAZIN</b></div>
+      <span class="pg-coins"><i class="ic-coin"></i><b id="shopCoins">0</b></span>
+    </header>
+    <div class="pg-body shop-page">
+      <nav class="pg-tabs shop-tabs" id="shopTabs"><button class="on" data-v="offers">Oferte</button><button data-v="champs">Campioni</button><button data-v="skins">Skinuri arme</button><button data-v="bomb">Bombă C4</button></nav>
+      <div class="shop-body stg" id="shopBody"></div>
     </div>
   </div>
 
-  <div id="rankPanel" class="screen" hidden>
-    <div class="wrap panel">
-      <div class="ph"><span class="t">Ranked</span><button class="chunky closeBtn" data-close="rankPanel">Închide</button></div>
-      <div id="rkBody"></div>
-      <div class="btnrow"><button id="rkPlay" class="play ranked">JOACĂ RANKED</button></div>
+  <div id="rankPanel" class="screen page pg-rank" hidden>
+    <header class="pg-top">
+      <button class="pg-back closeBtn" data-close="rankPanel" aria-label="Înapoi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="#2a1a00" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="pg-title"><small>RANGURI, SEZON ȘI REGULI</small><b>COMPETITIV</b></div>
+    </header>
+    <div class="pg-body rank-page">
+      <div id="rkBody" class="stg"></div>
+      <div class="pg-foot"><button id="rkPlay" class="play ranked">JOACĂ COMPETITIV</button></div>
     </div>
   </div>
 
-  <div id="friends" class="screen" hidden>
-    <div class="wrap panel">
-      <div class="ph"><span class="t" id="rmTitle">Camera ta</span><span class="rm-net" id="rmNet"><i></i><span>Offline</span></span><span id="rmGo"></span><button class="chunky closeBtn" data-close="friends">Închide</button></div>
-      <div class="rm-grid">
-        <section class="rm-room"><div class="rm-teams" id="rmTeams"></div><div class="rm-ctl" id="rmCtl"></div></section>
-        <section class="rm-inv">
+  <div id="friends" class="screen page pg-friends" hidden>
+    <header class="pg-top">
+      <button class="pg-back closeBtn" data-close="friends" aria-label="Înapoi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="#2a1a00" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="pg-title"><small>JOACĂ CU PRIETENII</small><b><span id="rmTitle">Camera ta</span></b></div>
+      <span class="rm-net" id="rmNet"><i></i><span>Offline</span></span><span id="rmGo"></span>
+    </header>
+    <div class="pg-body room-page">
+      <div class="rm-grid stg">
+        <section class="rm-room pg-card"><div class="rm-teams" id="rmTeams"></div><div class="rm-ctl" id="rmCtl"></div></section>
+        <section class="rm-inv pg-card">
           <div class="rm-me">
             <div class="rm-code"><small>CODUL TĂU</small><b id="rmCode">#------</b><button class="chunky" id="rmCopy">Copiază codul</button></div>
             <label class="rm-nick"><small>NUMELE TĂU</small><input id="rmNick" maxlength="14" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
@@ -1071,10 +1356,13 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
     </div>
   </div>
 
-  <div id="xhEd" class="screen" hidden>
-    <div class="wrap panel">
-      <div class="ph"><span class="t">Ținta</span><button class="chunky closeBtn" data-close="xhEd">Gata</button></div>
-      <div class="xe-grid">
+  <div id="xhEd" class="screen page pg-xh" hidden>
+    <header class="pg-top">
+      <button class="pg-back closeBtn" data-close="xhEd" aria-label="Gata"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="#2a1a00" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="pg-title"><small>SETĂRI</small><b>ȚINTA</b></div>
+    </header>
+    <div class="pg-body xh-page">
+      <div class="xe-grid stg">
         <div class="xe-prev"><div class="wall"></div><svg class="foe" viewBox="0 0 44 84" aria-hidden="true"><circle cx="22" cy="14" r="11" fill="#d8433a" stroke="#14100c" stroke-width="3"/><path d="M6 80 L8 36 Q22 26 36 36 L38 80 Z" fill="#8a2f2a" stroke="#14100c" stroke-width="3" stroke-linejoin="round"/></svg>
           <div class="xh" id="xhPrev"><i></i><i></i><i></i><i></i><b></b><u></u></div>
           <div class="xe-tg"><button class="chunky" id="xeRun">În fugă</button><button class="chunky" id="xeFoe">Pe inamic</button></div></div>
@@ -1092,43 +1380,72 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
     </div>
   </div>
 
-  <div id="champs" class="screen" hidden>
-    <div class="wrap panel">
-      <div class="ph"><span class="t">Campioni</span><span class="cnt" id="champCount">1 / 1</span><button class="chunky closeBtn" data-close="champs">Închide</button></div>
+  <div id="champs" class="screen page pg-champs" hidden>
+    <header class="pg-top">
+      <button class="pg-back closeBtn" data-close="champs" aria-label="Înapoi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="#2a1a00" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="pg-title"><small>ALEGE-ȚI LUPTĂTORUL</small><b>CAMPIONI</b></div>
+      <span class="pg-cnt" id="champCount">1 / 1</span>
+    </header>
+    <div class="pg-body champs-page">
       <div class="ch-layout">
-        <div class="ch-grid" id="champGrid"></div>
+        <div class="ch-grid stg" id="champGrid"></div>
         <div class="ch-detail" id="champDetail"></div>
       </div>
-      <p class="help">Campionii noi se deblochează din Magazin cu monede. Poți testa oricare campion într-un meci fără recompense.</p>
+      <p class="help ch-help">Campionii noi se deblochează din Magazin cu monede. Poți testa oricare campion într-un meci fără recompense.</p>
     </div>
   </div>
 
-  <div id="modeSel" class="screen" hidden>
-    <div class="wrap panel">
-      <div class="ph"><span class="t">Mod de joc: Bombă</span><button class="chunky closeBtn" data-close="modeSel">Gata</button></div>
-      <section><h2>Harta</h2><div class="map-cards" id="optMap"></div></section>
-      <section class="ms-train"><h2>Echipa ta</h2>
-        <div class="seg" id="optTeam">
-          <button class="chunky t-atk" data-v="atk">Atac<small>duci bomba pe site</small></button>
-          <button class="chunky t-def" data-v="def">Apărare<small>oprești bomba</small></button>
+  <div id="modeSel" class="screen page pg-mode" hidden>
+    <header class="pg-top">
+      <button class="pg-back closeBtn" data-close="modeSel" aria-label="Înapoi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="#2a1a00" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="pg-title"><small>ALEGE CUM JOCI</small><b>MOD DE JOC</b></div>
+      <nav class="pg-tabs ms-q" id="msQueue"><button data-v="train">ANTRENAMENT<small>cu boți</small></button><button data-v="custom">CUSTOM<small>cu prietenii</small></button><button data-v="ranked">COMPETITIV<small>clasat</small></button></nav>
+    </header>
+    <div class="pg-body mode-page">
+      <section class="ms-modes stg" id="optGm">
+        <button class="gm-card b5" data-gm="bomb" data-n="5"><svg class="gm-art" viewBox="0 0 120 80" aria-hidden="true"><g class="gm-float"><path class="gm-wire" d="M86 26 C96 16 104 22 100 12" fill="none" stroke="#14100c" stroke-width="3" stroke-linecap="round"/><rect x="18" y="26" width="84" height="42" rx="9" fill="#61713e" stroke="#14100c" stroke-width="3.2"/><rect x="19.6" y="33" width="80.8" height="7" fill="#46532b"/><rect x="19.6" y="53" width="80.8" height="7" fill="#46532b"/><rect x="38" y="35" width="44" height="24" rx="4.5" fill="#0c1a10" stroke="#14100c" stroke-width="2.6"/><text class="gm-num" x="60" y="52.5" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="13" fill="#7dff8a">5v5</text><circle class="gm-led" cx="100" cy="12" r="5.5" fill="#ff3b3b" stroke="#14100c" stroke-width="2.6"/></g></svg><span class="gm-t"><b>BOMBĂ 5 vs 5</b><small>Atac contra Apărare. Plantezi sau dezamorsezi C4-ul. Primul la 5 runde.</small></span><i class="gm-ok"></i></button>
+        <button class="gm-card b3" data-gm="bomb" data-n="3"><svg class="gm-art" viewBox="0 0 120 80" aria-hidden="true"><g class="gm-float"><path class="gm-wire" d="M86 26 C96 16 104 22 100 12" fill="none" stroke="#14100c" stroke-width="3" stroke-linecap="round"/><rect x="18" y="26" width="84" height="42" rx="9" fill="#61713e" stroke="#14100c" stroke-width="3.2"/><rect x="19.6" y="33" width="80.8" height="7" fill="#46532b"/><rect x="19.6" y="53" width="80.8" height="7" fill="#46532b"/><rect x="38" y="35" width="44" height="24" rx="4.5" fill="#0c1a10" stroke="#14100c" stroke-width="2.6"/><text class="gm-num" x="60" y="52.5" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="13" fill="#7dff8a">3v3</text><circle class="gm-led" cx="100" cy="12" r="5.5" fill="#ff3b3b" stroke="#14100c" stroke-width="2.6"/></g><g class="gm-bolt"><path d="M14 6 L6 22 H13 L9 34 L22 15 H15 L19 6 Z" fill="#ffe14d" stroke="#14100c" stroke-width="2.4" stroke-linejoin="round"/></g></svg><span class="gm-t"><b>BOMBĂ 3 vs 3</b><small>Echipe mici și runde rapide, pe aceleași hărți.</small></span><i class="gm-ok"></i></button>
+        <button class="gm-card dm" data-gm="dm"><svg class="gm-art" viewBox="0 0 120 80" aria-hidden="true"><circle class="gm-dot d1" cx="20" cy="18" r="6" fill="#ff8a4d" stroke="#14100c" stroke-width="2.4"/><circle class="gm-dot d2" cx="102" cy="16" r="6" fill="#4fa3ff" stroke="#14100c" stroke-width="2.4"/><circle class="gm-dot d3" cx="16" cy="64" r="6" fill="#7dff8a" stroke="#14100c" stroke-width="2.4"/><circle class="gm-dot d4" cx="104" cy="64" r="6" fill="#ffe14d" stroke="#14100c" stroke-width="2.4"/><g class="gm-rot"><circle cx="60" cy="40" r="24" fill="none" stroke="#14100c" stroke-width="8"/><circle cx="60" cy="40" r="24" fill="none" stroke="#fff" stroke-width="4"/><path d="M60 8v15M60 57v15M28 40h15M77 40h15" stroke="#14100c" stroke-width="8" stroke-linecap="round"/><path d="M60 8v15M60 57v15M28 40h15M77 40h15" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g><circle class="gm-core" cx="60" cy="40" r="6.5" fill="#ff3b3b" stroke="#14100c" stroke-width="2.6"/></svg><span class="gm-t"><b>DEATHMATCH</b><small>Fără echipe: fiecare pentru el. Reapari imediat, armele sunt gratis. Primul la <span class="dm-goal">20</span> de ucideri.</small><em class="gm-lock" id="gmLock">Nu se joacă în Competitiv</em></span><i class="gm-ok"></i></button>
+      </section>
+      <section class="ms-side">
+        <div class="ms-rank pg-card" id="msRank" hidden></div>
+        <div class="ms-block ms-map"><h2>Harta <em id="msMapNote"></em></h2><div class="map-cards stg" id="optMap"></div></div>
+        <div class="ms-block ms-train"><h2>Echipa ta</h2>
+          <div class="seg" id="optTeam"><button class="chunky t-atk" data-v="atk">Atac<small>duci bomba pe site</small></button><button class="chunky t-def" data-v="def">Apărare<small>oprești bomba</small></button></div>
         </div>
+        <div class="ms-block ms-bots"><h2>Boți</h2>
+          <div class="seg" id="optDiff"><button class="chunky" data-v="easy">Ușor</button><button class="chunky" data-v="normal">Normal</button><button class="chunky" data-v="hard">Greu</button></div>
+        </div>
+        <p class="help ms-note" id="msNote"></p>
+        <div class="pg-foot"><button class="play" id="msPlay">JOACĂ</button></div>
       </section>
-      <section class="ms-train"><h2>Meci</h2>
-        <div class="seg" id="optMode"><button class="chunky" data-v="3">3 vs 3</button><button class="chunky" data-v="5">5 vs 5</button></div>
+    </div>
+  </div>
+
+  <div id="setPage" class="screen page pg-set" hidden>
+    <header class="pg-top">
+      <button class="pg-back closeBtn" data-close="setPage" aria-label="Înapoi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="#2a1a00" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="pg-title"><small>SUNET, CONTROL, GRAFICĂ</small><b>SETĂRI</b></div>
+    </header>
+    <div class="pg-body set-page stg">
+      <section class="pg-card set-card"><h2>Sunet</h2>
+        <div class="set-row"><span>Sunet</span><div class="seg mini" id="optSnd"><button class="chunky" data-v="1">Pornit</button><button class="chunky" data-v="0">Oprit</button></div></div>
+        <label class="set-sl"><span>Volum</span><input type="range" id="optVol" min="0" max="100" step="5"><b id="optVolV">80</b></label>
       </section>
-      <section><h2>HUD</h2><div class="hud-mini"><div class="seg" id="hudSlotsMini"><button class="chunky" data-s="1">Slot 1<small>implicit</small></button><button class="chunky" data-s="2">Slot 2<small>implicit</small></button><button class="chunky" data-s="3">Slot 3<small>implicit</small></button></div><button class="chunky" id="hudOpen">Personalizează HUD</button></div></section>
-      <section><h2>Țintă</h2><div class="xe-mini"><div class="box"><div class="xh" id="xhMini"><i></i><i></i><i></i><i></i><b></b><u></u></div></div><button class="chunky" id="xhOpen">Personalizează ținta</button></div></section>
-      <section><h2>Ajutor la țintire</h2>
-        <div class="seg" id="optAssist"><button class="chunky" data-v="normal">Normal<small>ținta încetinește când trece peste un inamic</small></button><button class="chunky" data-v="low">Puțin<small>încetinește doar un pic</small></button><button class="chunky" data-v="off">Deloc<small>ținta merge exact cât muți degetul</small></button></div>
+      <section class="pg-card set-card"><h2>Control</h2>
+        <label class="set-sl"><span>Sensibilitate</span><input type="range" id="optSens" min="2" max="10" step="0.5"><b id="optSensV">5</b></label>
+        <label class="set-sl"><span>Câmp vizual</span><input type="range" id="optFov" min="64" max="90" step="1"><b id="optFovV">74°</b></label>
+        <p class="set-hint">Un câmp vizual mai larg îți arată mai mult din teren și lasă arma mai jos.</p>
       </section>
-      <section><h2>Grafică</h2>
-        <div class="seg" id="optGfx"><button class="chunky" data-v="auto">Automat</button><button class="chunky" data-v="high">Frumoasă</button><button class="chunky" data-v="balanced">Echilibrată</button><button class="chunky" data-v="eco">Economie<small>30 fps, fără umbre, telefonul stă rece</small></button></div>
+      <section class="pg-card set-card"><h2>Grafică</h2>
+        <div class="seg" id="optGfx"><button class="chunky" data-v="auto">Automat</button><button class="chunky" data-v="high">Frumoasă</button><button class="chunky" data-v="balanced">Echilibrată</button><button class="chunky" data-v="eco">Economie<small>30 fps, fără umbre</small></button></div>
       </section>
-      <section class="ms-train"><h2>Boți (Antrenament)</h2>
-        <div class="seg" id="optDiff"><button class="chunky" data-v="easy">Ușor</button><button class="chunky" data-v="normal">Normal</button><button class="chunky" data-v="hard">Greu</button></div>
+      <section class="pg-card set-card"><h2>Țintă</h2><div class="xe-mini"><div class="box"><div class="xh" id="xhMini"><i></i><i></i><i></i><i></i><b></b><u></u></div></div><button class="chunky" id="xhOpen">Personalizează ținta</button></div></section>
+      <section class="pg-card set-card"><h2>HUD</h2><div class="hud-mini"><div class="seg" id="hudSlotsMini"><button class="chunky" data-s="1">Slot 1<small>implicit</small></button><button class="chunky" data-s="2">Slot 2<small>implicit</small></button><button class="chunky" data-s="3">Slot 3<small>implicit</small></button></div><button class="chunky" id="hudOpen">Personalizează HUD</button></div></section>
+      <section class="pg-card set-card set-help"><h2>Controale</h2>
+        <p class="help" id="helpTouch"><b>Telefon:</b> jocul e la first person. Cu degetul în stânga te miști (împins doar pe jumătate mergi încet și fără zgomot), iar cu degetul în dreapta te uiți în jur. FOC trage: ține-l apăsat la armele automate, poți ochi și cât îl ții. Un glonț în cap face daune de peste două ori mai mari. Săgeata în sus te face să sari, așa că poți urca pe lăzi, butoaie și saci. Cu AWP-ul apasă LUNETĂ: o dată pentru zoom ×2, a doua oară pentru ×5. Butoanele le poți muta și mări din <b>Setări → HUD</b>.</p>
+        <p class="help" id="helpKeys"><b>Tastatură:</b> WASD mișcare, Shift mers încet, mouse ochire și foc, R reîncarcă, G grenadă, T schimbă grenada, Space sari, E plantează sau dezamorsează, B arsenal (cumperi arme), 1/2/3 arme și cuțit, Z lunetă.</p>
       </section>
-      <p class="help" id="helpTouch"><b>Telefon:</b> jocul e la first person. Cu degetul în stânga te miști (împins doar pe jumătate mergi încet și fără zgomot), iar cu degetul în dreapta te uiți în jur. FOC trage: ține-l apăsat la armele automate, poți ochi și cât îl ții. Un glonț în cap face daune de 2,5 ori mai mari. Săgeata în sus te face să sari, așa că poți urca pe lăzi, butoaie și saci. Cu AWP-ul apasă LUNETĂ: o dată pentru zoom ×2, a doua oară pentru ×5. Butoanele le poți muta și mări din <b>Pauză → HUD</b>.</p>
-      <p class="help" id="helpKeys"><b>Tastatură:</b> WASD mișcare, Shift mers încet, mouse ochire și foc, R reîncarcă, G grenadă, T schimbă grenada, Space sari, E plantează sau dezamorsează, B arsenal (cumperi arme), 1/2/3 arme și cuțit, Z lunetă.</p>
     </div>
   </div>
 
@@ -1169,22 +1486,24 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
     <p class="he-hint" id="heHint">Trage un buton ca să-l muți. Atinge-l ca să-i schimbi mărimea și vizibilitatea. Se salvează singur în slotul ales.</p>
   </div>
 
-  <div id="pause" class="screen" hidden>
-    <div class="wrap panel">
-      <div class="bigt">PAUZĂ</div>
-      <button id="resumeBtn" class="play">CONTINUĂ</button>
-      <div class="btnrow"><button id="soundBtn" class="chunky">Sunet: pornit</button><button id="xhPause" class="chunky">Țintă</button><button id="hudPause" class="chunky">HUD</button><button id="quitBtn" class="chunky">Ieși la meniu</button></div>
+  <div id="pause" class="screen page pg-pause" hidden>
+    <header class="pg-top"><button class="pg-back" id="pauseBack" aria-label="Continuă"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="#2a1a00" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="pg-title"><small id="pauseSub">MECI ÎN DESFĂȘURARE</small><b>PAUZĂ</b></div></header>
+    <div class="pg-body pause-page">
+      <div class="pz-menu stg">
+        <button id="resumeBtn" class="play">CONTINUĂ</button>
+        <button id="setPause" class="pz-btn"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 2.5h3.4l.5 2.6 1.6.9 2.5-.9 1.7 2.9-2 1.8v1.9l2 1.8-1.7 2.9-2.5-.9-1.6.9-.5 2.6h-3.4l-.5-2.6-1.6-.9-2.5.9-1.7-2.9 2-1.8v-1.9l-2-1.8 1.7-2.9 2.5.9 1.6-.9z" fill="#fff4e0" stroke="#14100c" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="#ffc83a" stroke="#14100c" stroke-width="1.8"/></svg></i><span>Setări<small>sunet, sensibilitate, grafică</small></span></button>
+        <button id="hudPause" class="pz-btn"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" fill="#fff4e0" stroke="#14100c" stroke-width="1.8"/><circle cx="7.5" cy="14" r="2.6" fill="#ffc83a" stroke="#14100c" stroke-width="1.5"/><circle cx="16.5" cy="12" r="3.2" fill="#ff6a4d" stroke="#14100c" stroke-width="1.5"/></svg></i><span>HUD<small>mută și mărește butoanele</small></span></button>
+        <button id="quitBtn" class="pz-btn quit"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4H6.5A2.5 2.5 0 0 0 4 6.5v11A2.5 2.5 0 0 0 6.5 20H14" fill="none" stroke="#fff4e0" stroke-width="2.6" stroke-linecap="round"/><path d="M11 12h9M17 8.5l3.5 3.5-3.5 3.5" fill="none" stroke="#ff8a8a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span>Ieși la meniu<small>meciul se termină pentru tine</small></span></button>
+      </div>
+      <div class="pz-board pg-card"><h2 id="pzBoardT">Scor</h2><div id="pzBoard"></div></div>
     </div>
   </div>
 
-  <div id="end" class="screen" hidden>
-    <div class="wrap panel">
-      <div class="bigt" id="endTitle">VICTORIE</div>
-      <div class="final" id="endScore"></div>
-      <div class="rankres" id="endRank" hidden></div>
-      <div class="rewards" id="endRewards"></div>
-      <div style="overflow-x:auto"><table class="stats" id="endTable"></table></div>
-      <div class="btnrow"><button id="againBtn" class="play">REVANȘĂ</button><button id="menuBtn" class="chunky">Meniu</button></div>
+  <div id="end" class="screen page pg-end" hidden>
+    <div class="pg-body end-page">
+      <div class="end-head stg"><div class="bigt" id="endTitle">VICTORIE</div><div class="final" id="endScore"></div><div class="rankres" id="endRank" hidden></div><div class="rewards" id="endRewards"></div></div>
+      <div class="end-table pg-card"><table class="stats" id="endTable"></table></div>
+      <div class="btnrow end-btns"><button id="againBtn" class="play">REVANȘĂ</button><button id="menuBtn" class="chunky">Meniu</button></div>
     </div>
   </div>
 
@@ -1283,6 +1602,10 @@ const SUPERS_ON = false; // the supers were taken out of the game
 /* jumping: about 1.1 m high and 0.64 s in the air; low props (crates, barrels, sandbags) can be climbed */
 const JUMP_V = 6.9, GRAVITY = 21.5, STEP_UP = 0.13, AIR_SPREAD = 0.09;
 const CHAR_SCALE = 1.18;
+/* first person field of view (vertical, landscape; portrait adds 12): the player can widen or narrow it in Setări */
+const FOV_DEF = 74, FOV_MIN = 64, FOV_MAX = 90;
+/* Deathmatch: players in a match, kills to win, length in seconds */
+const DM_N = 8, DM_GOAL = 20, DM_TIME = 300;
 const BASE_SPEED = 2.35, SUPER_DMG = 230, THINK = 0.16, STEP = 1 / 60, NADE_RANGE = 9;
 
 
@@ -1854,7 +2177,7 @@ function emit(x, y, z, n, type, speed, life, size, up) {
     if (fx.parts.length > 160) return;
     let m = fx.partPool.pop();
     if (!m) { m = new THREE.Mesh(PART_GEO, PART_MAT.spark); scene.add(m); }
-    m.material = PART_MAT[type] || PART_MAT.spark; m.visible = true;
+    m.material = PART_MAT[type] || (isFFA(type) ? PART_MAT[vteam(type)] : PART_MAT.spark); m.visible = true;
     const a = rnd(0, TAU), s = speed * rnd(0.35, 1);
     const p = { m, x, y, z, vx: Math.cos(a) * s, vy: (up == null ? rnd(0.5, 1.4) : up) * speed * rnd(0.5, 1), vz: Math.sin(a) * s, life: life * rnd(0.6, 1), max: 0, size: size * rnd(0.7, 1.3), grav: type === 'smoke' || type === 'heal' ? -1.2 : 9 };
     p.max = p.life; m.position.set(x, y, z); m.rotation.set(rnd(0, 3), rnd(0, 3), 0);
@@ -1920,7 +2243,7 @@ const bulletPool = [];
 function getBulletMesh(team) {
   let m = bulletPool.pop();
   if (!m) { m = new THREE.Mesh(BULLET_GEO, BULLET_MAT.atk); m.rotation.order = 'YZX'; m.frustumCulled = false; scene.add(m); }
-  m.material = BULLET_MAT[team]; m.visible = true; return m;
+  m.material = BULLET_MAT[team] || BULLET_MAT[vteam(team)]; m.visible = true; return m;
 }
 
 /* grenades & smoke meshes */
@@ -2353,9 +2676,10 @@ function setAnim(M, want, speed) {
 }
 function buildCharMesh(c) {
   const root = new THREE.Group();
-  const G = champFromGLB(c.team, SKINS[c.id % SKINS.length], c.agentId);
+  const mt = c.team === 'atk' || c.team === 'def' ? c.team : 'atk'; // deathmatch: everybody wears the enemy colours
+  const G = champFromGLB(mt, SKINS[c.id % SKINS.length], c.agentId);
   if (G && c.isPlayer) G.skin = profile.skin;
-  const M = G || buildChampModel(c.team, SKINS[c.id % SKINS.length]);
+  const M = G || buildChampModel(mt, SKINS[c.id % SKINS.length]);
   const sh = new THREE.Mesh(GEO.shadow, MAT.shadow); sh.rotation.x = -Math.PI / 2; sh.position.y = 0.02; root.add(sh);
   const ring = new THREE.Mesh(GEO.ring, MAT.ringAlly); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.035; root.add(ring);
   root.add(M.pivot); root.scale.setScalar(CHAR_SCALE);
@@ -3277,7 +3601,7 @@ function drawLobbyRibbon(g, w, h) {
   g.fillStyle = '#10142e'; g.fillRect(0, 0, w, h);
   g.fillStyle = 'rgba(255,255,255,0.05)'; for (let y = 3; y < h; y += 6) for (let x = 3; x < w; x += 6) g.fillRect(x, y, 2, 2);
   g.font = LOBBY_FONT(38); g.textBaseline = 'middle'; g.textAlign = 'left';
-  const parts = [['BLITZ', '#ffc83a'], ['SQUAD', '#6fc2ff'], ['★', '#ff8fb0'], ['SEZONUL ' + seasonNumber(), '#ffffff'], ['★', '#ff8fb0'], ['RANKED', '#ffd23f'], ['★', '#ff8fb0']];
+  const parts = [['BLITZ', '#ffc83a'], ['SQUAD', '#6fc2ff'], ['★', '#ff8fb0'], ['SEZONUL ' + seasonNumber(), '#ffffff'], ['★', '#ff8fb0'], ['COMPETITIV', '#ffd23f'], ['★', '#ff8fb0']];
   let x = 18;
   for (const [txt, col] of parts) { g.fillStyle = col; g.fillText(txt, x, h * 0.54); x += g.measureText(txt).width + 22; }
 }
@@ -3688,7 +4012,7 @@ function lobbySlotsUI() {
 
 
 /* ================= game state ================= */
-const settings = { team: 'atk', agent: 'bolt', mode: 5, diff: 'normal', map: 'bazar', mapV: 2, autoFire: false, fireV: 2, gfx: 'auto', assist: 'normal', aimV: 2, queue: 'train', cam: 'fpp', camV: 2, xh: null, hud: null };
+const settings = { team: 'atk', agent: 'bolt', mode: 5, diff: 'normal', map: 'bazar', mapV: 2, autoFire: false, fireV: 2, gfx: 'auto', assist: 'off', aimV: 2, queue: 'train', cam: 'fpp', camV: 2, xh: null, hud: null, fov: 74, gm: 'bomb', snd: 1, vol: 80, sens: 5, dmW: 'rifle', dmS: 'pistol', roomBots: 1 };
 let DIFF = DIFFS.normal;
 const game = { state: 'menu', paused: false, time: 0, round: 0, sAtk: 0, sDef: 0, timer: ROUND_TIME, freezeT: 0, postT: 0,
   loss: { atk: 0, def: 0 }, planted: false, atkSite: 1, intel: { atk: null, def: null }, specId: -1, lastWinner: null };
@@ -3745,6 +4069,7 @@ function tryFire(c, ang) {
     return true;
   }
   if (!c.alive || game.state !== 'live' || c.reloadT > 0 || c.fireCd > 0 || c.acting || c.dashT > 0 || c.stunT > 0 || c.leapT > 0) return false;
+  if (c.protT > 0) c.protT = 0; // deathmatch: shooting ends the protection
   const wid = curW(c), W = WEAPONS[wid], am = c.ammo[wid];
   if (W.melee) return knifeAttack(c, ang);
   if (am.mag <= 0) { if (am.res > 0) startReload(c); else if (c.isPlayer) Snd.click(); return false; }
@@ -3829,7 +4154,8 @@ function launchTracer(owner, ox, oz, ca, sa, end, y0, slope, wid, shotgun) {
    A shot is resolved the moment it is fired: the first body, turret or wall along the line takes it.
    What flies afterwards is only the tracer. For the local player in first/third person the camera ray also
    decides height: over the head misses, the head band is a headshot, under the feet hits the floor. */
-const TRACER_SPEED = 150, HEAD_MUL = 2.5;
+/* the champions have big heads: everything above 60% of their height is head */
+const TRACER_SPEED = 150, HEAD_MUL = 2.2, HEAD_FROM = 0.6;
 function traceShot(b, pv) {
   const step = 0.1;
   for (let t = 0; t < b.range; t += step) {
@@ -3845,9 +4171,10 @@ function traceShot(b, pv) {
     if (hit) {
       const fall = b.shotgun ? 1 - 0.45 * clamp(t / b.range, 0, 1) : 1;
       let hs = false;
-      if (pv) { const y = pv.y0 + pv.slope * t - (hit.jumpY || 0), H = charHeight(hit); hs = y >= H * 0.8; }
+      let hy = 0.8 + (hit.jumpY || 0);
+      if (pv) { const y = pv.y0 + pv.slope * t - (hit.jumpY || 0), H = charHeight(hit); hs = y >= H * HEAD_FROM; hy = clamp(y, 0.1, H) + (hit.jumpY || 0); }
       damage(hit, b.dmg * fall * (hs ? HEAD_MUL : 1), b.owner, b.wid, hs);
-      emit(hit.x - b.dx * 0.3, hs ? 1.6 : 0.8, hit.z - b.dz * 0.3, hs ? 7 : 4, hit.team, 2.2, 0.3, 0.1);
+      emit(x0 + b.dx * 0.05, hy, z0 + b.dz * 0.05, hs ? 7 : 4, hit.team, 2.2, 0.3, 0.1); // the hit shows where the bullet really struck
       return t + step;
     }
     if (turrets.length && bulletHitsTurret({ x: x0, z: z0, team: b.team, dmg: b.dmg, owner: b.owner }, nx, nz)) return t + step;
@@ -3907,6 +4234,7 @@ function charHeight(c) {
 function damage(t, amount, src, wid, hs) {
   if (NET.mode === 'client' || !t.alive) return;
   if (src && src !== t && src.team === t.team) return;
+  if (t.protT > 0 && wid !== 'leave') return; // deathmatch: just respawned
   let a = amount;
   if (t.shieldT > 0) a *= 0.25;
   if (t.armor > 0 && wid !== 'bomb') { const red = Math.min(t.armor, a * 0.35); t.armor = Math.max(0, t.armor - red); a -= red; }
@@ -3944,6 +4272,7 @@ function killChar(t, src, wid) {
   emit(t.x, 0.6, t.z, 10, t.team, 3, 0.6, 0.13); emit(t.x, 0.4, t.z, 9, 'dust', 2.4, 0.6, 0.2); ringFx(t.x, t.z, 1.3, 0xffffff, 0.35);
   Snd.death(t.x, t.z);
   if (t === player) onPlayerDeath(src);
+  if (game.dm) dmOnKill(t, src);
   checkRoundEnd();
 }
 
@@ -4113,6 +4442,7 @@ function updateAction(c, dt, want) {
 
 /* ================= visibility ================= */
 function computeHidden() {
+  if (game.dm) { computeHiddenDM(); return; }
   for (const c of chars) {
     c.hidden.atk = false; c.hidden.def = false;
     if (!c.alive) continue;
@@ -4125,6 +4455,16 @@ function computeHidden() {
       for (const o of chars) if (o.alive && o.team === other && d2(o.x, o.z, c.x, c.z) < 6.76) { h = false; break; }
     }
     c.hidden[other] = h;
+  }
+}
+/* deathmatch: hidden from each player separately (a bush hides you from everyone who is not right next to you) */
+function computeHiddenDM() {
+  for (const c of chars) {
+    const H = c.hidden; for (const k in H) H[k] = false;
+    if (!c.alive) continue;
+    const cover = c.invisT > 0 || inSmoke(c.x, c.z), bush = !cover && c.revealT <= 0 && bushAt(c.x, c.z);
+    if (!cover && !bush) continue;
+    for (const o of chars) if (o !== c) H[o.team] = cover || d2(o.x, o.z, c.x, c.z) >= 6.76;
   }
 }
 function spot(team, e) { const r = regionOf(e.x, e.z); if (r) game.intel[team] = { site: r, t: game.time, x: e.x, z: e.z }; }
@@ -4323,7 +4663,8 @@ function startMatch(humans) {
   if (!world.group || MAP.id !== settings.map || world.glb !== ASSETS.ready || world.eco !== (gfxLevel() === 'eco')) { buildWorld(settings.map); world.glb = ASSETS.ready; world.eco = gfxLevel() === 'eco'; }
   for (const c of chars) disposeCharMesh(c);
   chars.length = 0; nextId = 1; game.forfeit = 0;
-  DIFF = DIFFS[settings.diff] || DIFFS.normal;
+  DIFF = (game.ranked ? DIFFS.hard : DIFFS[settings.diff]) || DIFFS.normal;
+  if (game.dm) { startDM(humans); return; }
   camSign = settings.team === 'atk' ? 1 : -1;
   const enemy = settings.team === 'atk' ? 'def' : 'atk';
   const names = shuffle(BOT_NAMES.slice()), N = settings.mode;
@@ -4339,6 +4680,9 @@ function startMatch(humans) {
       c.bskin = h.me ? myBombKey() : validBombKey(h.bskin) ? h.bskin : 'clasic';
       if (h.me) player = c; else { c.ai = null; c.remote = h.peer; }
     }
+    // the free places in both teams go to bots (3 or 5 a side, as the leader chose)
+    const N = clamp(Math.max(NET.cfg.n === 3 ? 3 : 5, cnt.atk, cnt.def), 1, 5);
+    if (NET.cfg.bots !== 0) for (const t of ['atk', 'def']) for (let i = cnt[t]; i < N; i++) makeChar(t, botChamp(), names.pop(), false);
   } else {
     // Antrenament: you and bots
     player = makeChar(settings.team, game.trial || settings.agent, 'Tu', true); player.bskin = myBombKey();
@@ -4409,15 +4753,18 @@ function endRound(winner, reason) {
 }
 function nextRoundOrEnd() {
   hideBanner();
+  if (game.dm) { endMatch(); return; }
   if (game.sAtk >= WIN_ROUNDS || game.sDef >= WIN_ROUNDS) endMatch(); else startRound();
 }
 function endMatch() {
   game.state = 'over';
+  if (NET.mode === 'host') { NET.snapT = 0; netHostTick(0, true); } // the last snapshot: the guests see the end too (no more ticks after this)
+  if (game.dm) { showEnd(dmRank()[0] === player); return; }
   const winner = game.forfeit || (game.sAtk >= WIN_ROUNDS ? 'atk' : 'def');
   showEnd(winner === player.team);
 }
 function checkRoundEnd() {
-  if (game.state !== 'live') return;
+  if (game.state !== 'live' || game.dm) return;
   if (aliveCount('def') === 0) endRound('atk', 'Toți apărătorii au căzut');
   else if (aliveCount('atk') === 0 && bomb.state !== 'planted') endRound('def', 'Toți atacatorii au căzut');
 }
@@ -4427,7 +4774,8 @@ function simStep(dt) {
   if (game.scan) { if (game.scan.atk > 0) game.scan.atk -= dt; if (game.scan.def > 0) game.scan.def -= dt; }
   if (game.state === 'freeze') { game.freezeT -= dt; if (game.freezeT <= 0) beginLive(); }
   else if (game.state === 'live') {
-    if (bomb.state !== 'planted') { game.timer -= dt; if (game.timer <= 0) { game.timer = 0; endRound('def', 'Timpul a expirat'); } }
+    if (game.dm) dmTick(dt);
+    else if (bomb.state !== 'planted') { game.timer -= dt; if (game.timer <= 0) { game.timer = 0; endRound('def', 'Timpul a expirat'); } }
   } else if (game.state === 'post') { game.postT -= dt; if (game.postT <= 0) { nextRoundOrEnd(); return; } }
   computeHidden();
   spotT -= dt; if (spotT <= 0) { spotT = 0.2; computeSpotted(); }
@@ -4760,7 +5108,7 @@ function botThink(b) {
   const ai = b.ai;
   let best = null, bestS = 1e9;
   for (const e of chars) {
-    if (e.team === b.team || !e.alive || !canSee(b, e)) continue;
+    if (e.team === b.team || !e.alive || e.protT > 0 || !canSee(b, e)) continue;
     let s = d2(b.x, b.z, e.x, e.z);
     if (e === ai.target) s -= 8;
     if (e === ai.lastAttacker && game.time - ai.lastHitT < 2) s -= 12;
@@ -4799,6 +5147,17 @@ function decideGoal(b) {
   const ai = b.ai;
   ai.wantAct = false; ai.holdLook = null; ai.holdMode = false;
   if (game.state !== 'live') { ai.goal = null; return; }
+  if (game.dm) {
+    // deathmatch: roam the map, mostly toward where somebody is (so the fights keep coming)
+    if (!ai.roam || d2(b.x, b.z, ai.roam.x, ai.roam.z) < 2.2 || game.time > ai.roamT) {
+      const foes = chars.filter((e) => e.alive && e !== b && !e.gone);
+      let p = null;
+      if (foes.length && Math.random() < 0.6) { const e = pick(foes); p = freePoint(e.x + rnd(-3, 3), e.z + rnd(-3, 3)); }
+      else { const s = DM_SPAWNS.length ? pick(DM_SPAWNS) : null; if (s) p = { x: s[0], z: s[1] }; }
+      ai.roam = p || freePoint(b.x, b.z); ai.roamT = game.time + rnd(7, 13);
+    }
+    setGoal(b, ai.roam.x, ai.roam.z); return;
+  }
   if (b.team === 'atk') {
     if (bomb.state === 'planted') {
       if (ai.guardId !== bomb.plantId) { ai.guard = pointNear(bomb.x, bomb.z, 1.5, 4.5); ai.guardId = bomb.plantId; }
@@ -4929,7 +5288,7 @@ function botAct(b, dt) {
   const W = WEAPONS[wid], am = b.ammo[wid];
   if (am.mag === 0 && am.res > 0 && b.reloadT <= 0) startReload(b);
   let t = ai.target;
-  if (t && (!t.alive || t.hidden[b.team])) { ai.prevTarget = t; ai.target = t = null; }
+  if (t && (!t.alive || t.hidden[b.team] || t.protT > 0)) { ai.prevTarget = t; ai.target = t = null; }
   if (!t && b.reloadT <= 0 && am.mag < W.mag * 0.4 && am.res > 0 && !ai.wantAct) startReload(b);
   if (ai.wantAct) {
     updateAction(b, dt, true);
@@ -4968,7 +5327,7 @@ function botAct(b, dt) {
   } else {
     let gx = null, gz = null;
     const ls = ai.lastSeen;
-    const chase = ls && game.time - ls.t < 2.6 && (b.team === 'atk' ? bomb.carrier !== b : (bomb.state === 'planted' || !ai.hold || d2(ls.x, ls.z, ai.hold.x, ai.hold.z) < 36));
+    const chase = ls && game.time - ls.t < 2.6 && (game.dm || (b.team === 'atk' ? bomb.carrier !== b : (bomb.state === 'planted' || !ai.hold || d2(ls.x, ls.z, ai.hold.x, ai.hold.z) < 36)));
     if (chase && d2(b.x, b.z, ls.x, ls.z) > 0.5) { gx = ls.x; gz = ls.z; }
     else if (ai.goal) { gx = ai.goal.x; gz = ai.goal.z; }
     if (gx !== null && d2(b.x, b.z, gx, gz) > 0.09) { const d = pathDir(b, gx, gz, dt); mx = d[0]; mz = d[1]; }
@@ -4986,6 +5345,172 @@ function botAct(b, dt) {
   }
   if (ai.unstickT > 0) { ai.unstickT -= dt; mx = Math.cos(ai.unA); mz = Math.sin(ai.unA); }
   b.wx = mx; b.wz = mz;
+}
+
+/* ================= Deathmatch: no teams, everybody against everybody =================
+   Everyone gets a team of their own ('f1', 'f2'…), so every "is this an enemy?" check already works.
+   You respawn DM_RESPAWN seconds after dying, away from the others, with a short protection that ends when you shoot.
+   Weapons are free: you pick a main gun and a pistol (bots pick their own). First to DM_GOAL kills wins, or whoever
+   has the most kills when the clock runs out. */
+const DM_RESPAWN = 2, DM_PROT = 2, DM_START = 3;
+const DM_PRIMARY = ['rifle', 'carbine', 'smg', 'shotgun', 'sniper'], DM_SECONDARY = ['pistol', 'revolver'];
+const DM_SPAWNS = [];
+let dmSpawnMap = null;
+const isFFA = (t) => typeof t === 'string' && /^f\d{1,2}$/.test(t);
+/* spawn points: open floor reachable from the spawns, with free tiles all around, a few tiles apart */
+function buildDMSpawns() {
+  DM_SPAWNS.length = 0;
+  const free = (i, j) => i > 0 && j > 0 && i < MW - 1 && j < MH - 1 && grid[j * MW + i] === 0 && !waterT[j * MW + i];
+  const s0 = spawnTiles.atk[0] || spawnTiles.def[0]; if (!s0) return;
+  const seen = new Uint8Array(NN), q = [Math.floor(s0[1]) * MW + Math.floor(s0[0])]; seen[q[0]] = 1;
+  for (let h = 0; h < q.length; h++) {
+    const k = q[h], i = k % MW, j = (k / MW) | 0;
+    for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const ni = i + di, nj = j + dj; if (!free(ni, nj)) continue;
+      const n = nj * MW + ni; if (seen[n]) continue; seen[n] = 1; q.push(n);
+    }
+  }
+  const cand = [];
+  for (const k of q) {
+    const i = k % MW, j = (k / MW) | 0; let ok = !bushT[k];
+    for (let dj = -1; dj <= 1 && ok; dj++) for (let di = -1; di <= 1; di++) if (!free(i + di, j + dj)) { ok = false; break; }
+    if (ok) cand.push([i + 0.5, j + 0.5]);
+  }
+  shuffle(cand);
+  for (const p of cand) if (!DM_SPAWNS.some((s) => d2(s[0], s[1], p[0], p[1]) < 9)) DM_SPAWNS.push(p);
+}
+/* the best of a few random spawn points: far from everyone, and out of their sight */
+function dmSpawnPoint(c) {
+  const foes = chars.filter((e) => e !== c && e.alive && !e.gone);
+  let best = null, bs = -1e9;
+  for (let n = 0; n < 26 && DM_SPAWNS.length; n++) {
+    const p = DM_SPAWNS[(Math.random() * DM_SPAWNS.length) | 0];
+    let md = 1e9, seen = 0;
+    for (const e of foes) { const dd = d2(e.x, e.z, p[0], p[1]); if (dd < md) md = dd; if (dd < 324 && losClear(e.x, e.z, p[0], p[1])) seen++; }
+    const s = Math.min(Math.sqrt(md), 22) - seen * 9 + rnd(0, 3);
+    if (s > bs) { bs = s; best = p; }
+  }
+  return best || pick(spawnTiles.atk.concat(spawnTiles.def));
+}
+const dmBotGun = () => { const r = Math.random(); return r < 0.3 ? 'rifle' : r < 0.54 ? 'carbine' : r < 0.74 ? 'smg' : r < 0.87 ? 'shotgun' : 'sniper'; };
+function dmGear(c) {
+  const P = DM_PRIMARY.includes(c.dmW) ? c.dmW : 'rifle', S = DM_SECONDARY.includes(c.dmS) ? c.dmS : 'pistol';
+  c.primary = P; c.secondary = S; c.slot = 0; c.lastGun = 1; c.reloadT = 0; c.burst = 0; c.recoil = 0;
+  c.ammo = { [P]: { mag: WEAPONS[P].mag, res: WEAPONS[P].res }, [S]: { mag: WEAPONS[S].mag, res: WEAPONS[S].res }, knife: { mag: 1, res: 0 } };
+  c.armor = 0; c.he = 0; c.smoke = 0; c.kit = false;
+}
+/* look down the longest open line from a spawn point (not into the nearest wall) */
+function openDir(x, z) {
+  let best = Math.atan2(MH / 2 - z, MW / 2 - x), bl = -1;
+  for (let k = 0; k < 16; k++) {
+    const a = (k / 16) * TAU, ca = Math.cos(a), sa = Math.sin(a);
+    let t = 0.5; while (t < 30 && !blockAt(x + ca * t, z + sa * t)) t += 0.4;
+    const s = t + Math.cos(angDiff(a, Math.atan2(MH / 2 - z, MW / 2 - x))) * 1.5;
+    if (s > bl) { bl = s; best = a; }
+  }
+  return best;
+}
+function dmRespawn(c) {
+  const p = dmSpawnPoint(c);
+  if (c.ai && Math.random() < 0.25) c.dmW = dmBotGun();
+  dmGear(c);
+  Object.assign(c, { x: p[0] + rnd(-0.2, 0.2), z: p[1] + rnd(-0.2, 0.2), vx: 0, vz: 0, wx: 0, wz: 0, alive: true, hp: c.maxHp, fireCd: 0.25, acting: null, plantT: 0, defuseT: 0,
+    shieldT: 0, invisT: 0, dashT: 0, revealT: 0, deathT: 0, autoReloadT: 0, recentDmg: 0, stunT: 0, pullT: 0, pullBy: null, leapT: 0, jumpY: 0, vy: 0, air: false, streak: 0,
+    protT: DM_PROT, respawnT: 0 });
+  c.aim = c.faceR = openDir(c.x, c.z);
+  if (c.ai) c.ai = makeAI();
+  if (c === player) { view.yaw = c.aim; view.pitch = 0.05; VM.drawT = 0; clearInputs(); snapCamera(); Snd.swap(); }
+}
+/* the match: you, the people in the room and bots up to DM_N, each on their own */
+function startDM(humans) {
+  game.dm = true; game.dmGoal = DM_GOAL; game.dmWin = null;
+  if (!DM_SPAWNS.length || dmSpawnMap !== MAP.id) { buildDMSpawns(); dmSpawnMap = MAP.id; }
+  const names = shuffle(BOT_NAMES.slice()), botChamp = () => pick(AGENT_IDS);
+  let k = 0;
+  const team = () => 'f' + ++k;
+  if (humans && humans.length) {
+    for (const h of humans.slice(0, DM_N)) {
+      const c = makeChar(team(), AGENTS[h.champ] ? h.champ : DEFAULT_AGENT, h.nick, !!h.me);
+      c.bskin = h.me ? myBombKey() : validBombKey(h.bskin) ? h.bskin : 'clasic';
+      if (h.me) player = c; else { c.ai = null; c.remote = h.peer; }
+    }
+  } else { player = makeChar(team(), game.trial || settings.agent, 'Tu', true); player.bskin = myBombKey(); }
+  if (!(humans && humans.length) || NET.cfg.bots !== 0) while (chars.length < DM_N) makeChar(team(), botChamp(), names.pop() || 'Bot ' + k, false);
+  for (const c of chars) { c.dmW = c.ai ? dmBotGun() : 'rifle'; c.dmS = c.ai && Math.random() < 0.3 ? 'revolver' : 'pistol'; }
+  player.dmW = settings.dmW; player.dmS = settings.dmS;
+  for (const c of chars) c.m.ring.material = c === player ? MAT.ringMe : MAT.ringFoe;
+  camSign = 1;
+  Object.assign(game, { round: 1, sAtk: 0, sDef: 0, loss: { atk: 0, def: 0 }, time: 0, paused: false, specId: -1 });
+  clearRoundObjects();
+  game.planted = false; game.intel = { atk: null, def: null }; game.firstBlood = false; game.scan = { atk: 0, def: 0 };
+  bomb.state = 'none'; bomb.carrier = null; bomb.defuser = null; bomb.timer = 0;
+  for (const c of chars) { c.mvps = 0; c.alive = false; c.respawnT = 0; }
+  for (const c of chars) { dmRespawn(c); c.protT = 0; }
+  game.state = 'freeze'; game.freezeT = DM_START; game.timer = DM_TIME;
+  NET.ready = {};
+  hudNewMatch(); hudNewRound(); snapCamera();
+  toast('Deathmatch: primul la ' + DM_GOAL + ' de ucideri!', 'def');
+}
+function dmTick(dt) {
+  game.timer -= dt;
+  for (const c of chars) {
+    if (c.protT > 0) c.protT -= dt;
+    if (!c.alive && !c.gone) { c.respawnT -= dt; if (c.respawnT <= 0) dmRespawn(c); }
+  }
+  if (game.timer <= 0) { game.timer = 0; dmFinish(); }
+}
+function dmOnKill(t, src) {
+  t.respawnT = DM_RESPAWN; t.protT = 0;
+  if (src && src !== t && src.kills >= game.dmGoal) dmFinish();
+}
+/* standings: most kills, then fewest deaths, then the most damage */
+const dmRank = () => chars.filter((c) => !c.gone || c.kills > 0).sort((a, b) => b.kills - a.kills || a.deaths - b.deaths || b.dmgDealt - a.dmgDealt);
+function dmFinish() {
+  if (game.state !== 'live') return;
+  const L = dmRank()[0];
+  game.state = 'post'; game.postT = 3.4; game.dmWin = L ? L.id : 0;
+  for (const c of chars) { c.wx = c.wz = 0; c.acting = null; }
+  dmBanner(L);
+  if (NET.mode === 'host') nev('W', L ? L.id : 0);
+}
+function dmBanner(L) {
+  if (!L) return;
+  el.banner.className = L === player ? 'def' : 'atk';
+  el.banner.innerHTML = '<b>' + (L === player ? 'AI CÂȘTIGAT!' : frEsc(L.name).toUpperCase() + ' CÂȘTIGĂ') + '</b><span>' + L.kills + (L.kills === 1 ? ' ucidere' : ' ucideri') + ' · ' + L.deaths + (L.deaths === 1 ? ' moarte' : ' morți') + '</span>';
+  el.banner.hidden = false;
+  if (L === player) Snd.win(); else Snd.lose();
+}
+/* ---------------- choosing your guns (a strip of buttons while you wait to respawn, or from the ARME button) ---------------- */
+const DMP = { open: false, built: false };
+function buildDMPick() {
+  const row = (list) => list.map((w) => '<button class="dmp-w" data-w="' + w + '"><img alt="" src="icon_' + w + '.png"><span>' + WEAPONS[w].short + '</span></button>').join('');
+  $('#dmpP').innerHTML = row(DM_PRIMARY); $('#dmpS').innerHTML = row(DM_SECONDARY);
+  $('#dmPick').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-w]'); if (b) { dmChoose(b.dataset.w); return; }
+    if (e.target.closest('#dmpX')) { DMP.open = false; Snd.ui(); }
+  });
+  DMP.built = true;
+}
+function dmChoose(w) {
+  if (DM_PRIMARY.includes(w)) settings.dmW = w; else if (DM_SECONDARY.includes(w)) settings.dmS = w; else return;
+  saveSettings(); Snd.init(); Snd.ui();
+  if (!player) return;
+  player.dmW = settings.dmW; player.dmS = settings.dmS;
+  let now = false;
+  if (NET.mode === 'client') { netAction('D', settings.dmW, settings.dmS); now = player.alive && player.shieldT > 0; }
+  else if (player.alive && player.protT > 0) { dmGear(player); VM.drawT = 0; now = true; }
+  DMP.note = now ? 'Gata, o ai acum.' : 'O primești când reapari.'; DMP.noteT = performance.now();
+  if (now && player.alive) DMP.open = false;
+}
+function toggleDMPick(v) { DMP.open = v === undefined ? !DMP.open : !!v; Snd.init(); Snd.ui(); }
+function updateDMPick() {
+  const box = $('#dmPick'); if (!box) return;
+  const p = player, on = !!(game.dm && p && game.state !== 'over' && game.state !== 'menu' && game.state !== 'post' && (DMP.open || !p.alive));
+  show(box, on); if (!on) return;
+  if (!DMP.built) buildDMPick();
+  for (const b of box.querySelectorAll('button[data-w]')) toggleClass(b, 'on', b.dataset.w === settings.dmW || b.dataset.w === settings.dmS);
+  const note = DMP.note && performance.now() - DMP.noteT < 2600 ? DMP.note : p.alive ? 'Schimbi arma doar cât ești protejat; altfel o primești la reapariție.' : 'O primești când reapari.';
+  setText($('#dmpN'), note);
 }
 
 
@@ -5006,7 +5531,7 @@ const Snd = {
     try {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       const ctx = new AC(); this.ctx = ctx;
-      this.master = ctx.createGain(); this.master.gain.value = this.on ? 0.55 : 0;
+      this.master = ctx.createGain(); this.master.gain.value = this.level();
       const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 6;
       this.master.connect(comp); comp.connect(ctx.destination);
       const len = ctx.sampleRate | 0, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
@@ -5015,7 +5540,8 @@ const Snd = {
       if (ctx.state === 'suspended') ctx.resume().catch(() => {});
     } catch (e) { this.ctx = null; }
   },
-  setOn(v) { this.on = v; if (this.master) this.master.gain.value = v ? 0.55 : 0; },
+  level() { return this.on ? 0.69 * clamp(Number.isFinite(+settings.vol) ? +settings.vol : 80, 0, 100) / 100 : 0; },
+  setOn(v) { this.on = !!v; if (this.master) this.master.gain.value = this.level(); },
   ok() { return !!this.ctx && this.on && this.ctx.state === 'running' && this.voices < 28; },
   spatial(x, z) { return Math.pow(clamp(1 - Math.sqrt(d2(x, z, cam.x, cam.z)) / 24, 0, 1), 1.4); },
   out(x) {
@@ -5081,7 +5607,7 @@ const view = { yaw: -Math.PI / 2, pitch: 0.1, sens: 0.0068 };
 const isPOV = () => settings.cam !== 'top' && game.state !== 'menu' && !!player;
 const isFPP = () => (settings.cam === 'fpp' || (player && player.scoped)) && isPOV() && player.alive;
 function lookBy(dx, dy) {
-  const f = player && player.aimLock ? (settings.assist === 'normal' ? 0.55 : settings.assist === 'low' ? 0.8 : 1) : 1; // the view slows down over an enemy (sticky aim)
+  const f = 1; // no aim assist: the view turns exactly as much as the finger moves
   const z = player && player.scoped ? camera.fov / 70 : 1; // through the scope the view turns slower, like the zoom
   view.yaw += dx * view.sens * f * z; view.pitch = clamp(view.pitch + dy * view.sens * 0.75 * f * z, -0.42, 0.62);
 }
@@ -5231,7 +5757,7 @@ window.addEventListener('keydown', (e) => {
     case 'KeyF': input.swap = true; break;
     case 'Space': input.jump = true; break;
     case 'KeyT': toggleNade(); break;
-    case 'KeyB': if (game.state === 'freeze') toggleBuy(); break;
+    case 'KeyB': if (game.dm) openBuy(); else if (game.state === 'freeze') toggleBuy(); break;
     case 'Enter': if (game.state === 'freeze') readyUp(); break;
     case 'Escape': case 'KeyP': if (game.state !== 'over') togglePause(); break;
     default: break;
@@ -5312,7 +5838,7 @@ function povAim(p, W) {
     if (y < 0.02 || y < topAt(x, z)) { tx = x; tz = z; break; }
     let hit = null;
     for (const e of chars) { if (!e.alive || e.team === p.team || e.hidden[p.team]) continue; const ey = y - (e.jumpY || 0); if (d2(x, z, e.x, e.z) < HIT_R * HIT_R && ey >= -0.05 && ey <= charHeight(e) * HIT_TOP) { hit = e; break; } }
-    if (hit) { tx = hit.x; tz = hit.z; if (Math.hypot(hit.x - p.x, hit.z - p.z) <= W.range + hit.r + 0.2) lock = hit; break; }
+    if (hit) { tx = x; tz = z; if (Math.hypot(hit.x - p.x, hit.z - p.z) <= W.range + hit.r + 0.2) lock = hit; break; } // exactly where the crosshair is (lock only colours the crosshair)
   }
   p.aimLock = lock;
   return Math.atan2(tz - p.z, tx - p.x);
@@ -5320,7 +5846,7 @@ function povAim(p, W) {
 /* height of a shot along its path: the camera ray's slope (plus vertical spread) starting at the gun */
 function povVert(c, spread) {
   const R = povRay(), ox = c.x + Math.cos(c.aim) * 0.5, oz = c.z + Math.sin(c.aim) * 0.5;
-  const t = (ox - R.cx) * R.dx + (oz - R.cz) * R.dz, slope = R.slope + rnd(-1, 1) * spread * 0.8;
+  const t = (ox - R.cx) * R.dx + (oz - R.cz) * R.dz, slope = R.slope + rnd(-1, 1) * spread * 0.45; // less spread up and down than sideways
   return { y0: R.cy + slope * t, slope };
 }
 /* ground point under the crosshair, kept between 1.5 and maxD from the player (grenades, supers) */
@@ -5434,7 +5960,7 @@ function updateCameraPOV(dt) {
   const me = player.alive, f = me ? player : spectateTarget() || player, scoped = me && !!player.scoped, fpp = (settings.cam === 'fpp' || scoped) && me;
   const yaw = me ? view.yaw : f.faceR || 0, pitch = me ? view.pitch : 0.12, cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
   const asp = camera.aspect;
-  setCamFov(scoped ? SCOPE_FOV[player.scopeLvl] * (asp >= 1 ? 1 : 1.25) : fpp ? (asp >= 1 ? 72 : 84) : (asp >= 1 ? 62 : 78), scoped ? 120 : 90, fpp ? 0.06 : 0.15);
+  setCamFov(scoped ? SCOPE_FOV[player.scopeLvl] * (asp >= 1 ? 1 : 1.25) : fpp ? (settings.fov || FOV_DEF) + (asp >= 1 ? 0 : 12) : (asp >= 1 ? 62 : 78), scoped ? 120 : 90, fpp ? 0.06 : 0.15);
   let sx = 0, sz = 0, sh = 0;
   if (cam.shake > 0) { sx = rnd(-1, 1) * cam.shake * 0.08; sz = rnd(-1, 1) * cam.shake * 0.08; sh = rnd(-1, 1) * cam.shake * 0.05; cam.shake = Math.max(0, cam.shake - dt * 2.2); }
   if (view.round !== game.round && me) { view.round = game.round; view.yaw = player.team === 'atk' ? -Math.PI / 2 : Math.PI / 2; view.pitch = 0.1; }
@@ -5698,8 +6224,12 @@ const VM_GUN = {
     mag: [[-0.06, -0.17, 0.09], [0.06, 0.005, 0.215]], eject: [-0.03, 0.082, 0.08], kick: [0.024, 0.055], charge: [0.04, 0.04, 0.12] },
   sniper: { s: 0.51, pos: [0.16, -0.096, -0.25], R: [-0.01, -0.005, -0.012], Rt: 0.3, L: [0.012, 0.03, 0.42],
     mag: [[-0.06, -0.015, 0.15], [0.06, 0.04, 0.245]], eject: [-0.03, 0.1, 0.05], kick: [0.07, 0.22], bolt: [-0.05, 0.1, -0.005] },
-  knife: { s: 1, pos: [0.15, -0.118, -0.29], R: [0, 0.004, -0.02], knife: true },
+  knife: { s: 1, pos: [0.16, -0.122, -0.3], R: [0, 0.004, -0.02], knife: true },
 };
+/* every gun sits lower and further into the corner than its table spot, so the ground in front stays visible;
+   a wider field of view (Setări) pushes it a little lower and smaller still */
+const VM_LOW = { land: [0.02, -0.05, -0.014], port: [0.004, -0.066, -0.012] };
+const fovK = () => clamp(((settings.fov || FOV_DEF) - FOV_DEF) / 14, -1, 1);
 const ELBOW = { long: { R: [0.27, -0.27, 0.06], L: [-0.15, -0.33, -0.08] }, short: { R: [0.24, -0.27, 0.03], L: [-0.03, -0.31, -0.05] } };
 const VM_FIST = new THREE.SphereGeometry(1, 14, 10), VM_TUBE = (() => { const g = new THREE.CylinderGeometry(1, 1, 1, 14, 1); g.translate(0, 0.5, 0); g.rotateX(Math.PI / 2); return g; })();
 const VM_BRASS = new THREE.MeshLambertMaterial({ color: 0xd9a441, emissive: 0x3a2508 }), VM_SHELL = new THREE.MeshLambertMaterial({ color: 0xc8342b });
@@ -5948,7 +6478,7 @@ function syncViewModel(dt) {
   const arms = vmArms(p.agentId), G = g.G, W = WEAPONS[wid];
   VM.rig.visible = true;
   // a camera with its own field of view (wider on a portrait screen)
-  const asp = camera.aspect, fov = asp >= 1 ? 54 : 70;
+  const asp = camera.aspect, fov = (asp >= 1 ? 58 : 74) + fovK() * 5;
   if (VM.cam.aspect !== asp || VM.fov !== fov) { VM.cam.aspect = asp; VM.cam.fov = fov; VM.fov = fov; VM.cam.updateProjectionMatrix(); }
   VM.t += dt; VM.drawT += dt;
   if ((p.acting || null) !== VM.act) { const was = VM.act; VM.act = p.acting || null; VM.actT0 = VM.t; VM.taps = 0; if (was && !VM.act) VM.drawT = 0; }
@@ -6000,13 +6530,13 @@ function syncViewModel(dt) {
   if (pumpU >= 0) { rx += 0.03 * bump(0, 1, pumpU); if (pumpU > 0.45 && !VM.pumpCase) { VM.pumpCase = true; ejectCasing(true); } } else VM.pumpCase = false;
   // place the rig: the grip at its spot in front of the eye
   // on a portrait screen the gun comes in toward the middle and a little smaller
-  const hx = asp >= 1 ? 1 : clamp(asp * 0.7, 0.3, 1), pf = asp >= 1 ? 1 : 0.8, B = G.pos;
+  const hx = asp >= 1 ? 1 : clamp(asp * 0.7, 0.3, 1), pf = asp >= 1 ? 1 : 0.72, B = G.pos, O = asp >= 1 ? VM_LOW.land : VM_LOW.port, lo = 1 + Math.max(0, fovK()) * 0.35;
   VM.pf = pf; VM.rig.scale.setScalar(pf);
-  VM.rig.position.set(B[0] * hx + px, B[1] * (asp >= 1 ? 1 : 0.92) + py, B[2] + pz);
+  VM.rig.position.set(B[0] * hx + O[0] + px, B[1] * (asp >= 1 ? 1 : 0.92) + O[1] * lo + py, B[2] + O[2] + pz);
   if (G.knife) {
     const u = clamp((game.time - p.lastShotT) / 0.3, 0, 1), sw = u < 1 ? Math.sin(u * Math.PI) : 0, dir = (p.slashN || 0) % 2 ? -1 : 1;
     VM.rig.position.x -= sw * 0.2 * dir; VM.rig.position.y += sw * 0.03; VM.rig.position.z -= sw * 0.08;
-    VM.rig.rotation.set(0.25 + sw * 0.5 + rx, 0.5 + 0.3 * dir * sw + ry, -0.45 + dir * sw * 1.1 + rz, 'YXZ');
+    VM.rig.rotation.set(0.08 + sw * 0.5 + rx, 0.5 + 0.3 * dir * sw + ry, -0.45 + dir * sw * 1.1 + rz, 'YXZ');
   } else VM.rig.rotation.set(0.025 + rx, 0.035 + ry, rz, 'YXZ');
   VM.rig.updateMatrixWorld(true);
   // magazine / pump
@@ -6101,7 +6631,7 @@ function lineTarget(p, a, range, pad, minTol, maxTol) {
    7 far away) and the shot leads him; "Puțin" only when the line already grazes his body; "Deloc" is off.
    The line turns red whenever the shot would hit. */
 function aimAssistTarget(p, a, range) {
-  if (settings.assist === 'off') return null;
+  if (settings.assist === 'off' || !settings.assist) return null;
   return settings.assist === 'low' ? lineTarget(p, a, range, 0.22, 0, 0.12) : lineTarget(p, a, range, 0.72, 0.12, 0.27);
 }
 const aimOnTarget = (p, a, range) => lineTarget(p, a, range, 0.07, 0, 0.5);
@@ -6305,11 +6835,12 @@ function roundMVP(winner) {
 /* Antrenament (bots) pays half the coins and no trophies; trophies come from matches with people */
 function matchRewards(win, train) {
   if (game.trial) return null;
-  const me = player, roundsWon = me.team === 'atk' ? game.sAtk : game.sDef, k = train ? 0.5 : 1;
-  const parts = [['Meci jucat', 40], ['Victorie', win ? 60 : 0], ['Ucideri × 6', me.kills * 6], ['Runde câștigate × 10', roundsWon * 10], ['MVP de rundă × 15', (me.mvps || 0) * 15]].map((p) => [p[0], Math.round(p[1] * k)]);
+  const me = player, roundsWon = me.team === 'atk' ? game.sAtk : game.sDef, k = train ? 0.5 : 1, pl = game.dmPlace || 9;
+  const parts = (game.dm ? [['Meci jucat', 40], ['Locul ' + pl, pl === 1 ? 70 : pl === 2 ? 40 : pl === 3 ? 25 : 0], ['Ucideri × 4', me.kills * 4]]
+    : [['Meci jucat', 40], ['Victorie', win ? 60 : 0], ['Ucideri × 6', me.kills * 6], ['Runde câștigate × 10', roundsWon * 10], ['MVP de rundă × 15', (me.mvps || 0) * 15]]).map((p) => [p[0], Math.round(p[1] * k)]);
   const coins = parts.reduce((s, p) => s + p[1], 0);
   const id = me.agentId, before = trophiesOf(id);
-  const dT = train ? 0 : win ? 8 + Math.min(4, me.mvps || 0) : -Math.min(before, 4);
+  const dT = train ? 0 : game.dm ? (pl === 1 ? 8 : pl <= 3 ? 3 : -Math.min(before, 2)) : win ? 8 + Math.min(4, me.mvps || 0) : -Math.min(before, 4);
   profile.coins += coins; profile.trophies[id] = before + dT;
   profile.stats.matches++; if (win) profile.stats.wins++; profile.stats.kills += me.kills; profile.stats.mvps += me.mvps || 0;
   saveProfile();
@@ -6753,7 +7284,7 @@ const ROOM_MAX = 10, TEAM_MAX = 5;
 const NET = {
   mode: null, inputs: {}, lastAct: {}, ev: [], evSeq: 0, seenEv: 0, snapT: 0, inT: 0, actQ: [], actN: 0, actT: 0, fireUntil: 0, fireA: 0, act: false,
   mid: 0, curMid: 0, ready: {}, started: false, leaderAtStart: '',
-  role: 'solo', leader: null, joinConn: null, guests: new Map(), members: [], known: new Set(), cfg: { map: 'bazar', q: 'custom' },
+  role: 'solo', leader: null, joinConn: null, guests: new Map(), members: [], known: new Set(), cfg: { map: 'bazar', q: 'custom', gm: 'bomb', n: 5, bots: 1 },
   team: 'atk', readyL: false, status: '', joining: false, lastCard: '',
 };
 const W_IDS = ['pistol', 'revolver', 'smg', 'shotgun', 'rifle', 'sniper', 'carbine', 'knife'];
@@ -6783,7 +7314,7 @@ function setMembers(R) {
   const m = Array.isArray(R.m) ? R.m.slice(0, ROOM_MAX) : [];
   const meId = myPeerId();
   NET.members = m.filter((e) => Array.isArray(e) && typeof e[0] === 'string').map((e) => ({ id: e[0], card: cleanCard(e[1]), leader: !!e[2], me: e[0] === meId }));
-  if (R.cfg && typeof R.cfg === 'object') NET.cfg = { map: MAPDEFS[R.cfg.map] ? R.cfg.map : 'oaza', q: R.cfg.q === 'ranked' ? 'ranked' : 'custom' };
+  if (R.cfg && typeof R.cfg === 'object') NET.cfg = { map: MAPDEFS[R.cfg.map] ? R.cfg.map : 'bazar', q: R.cfg.q === 'ranked' ? 'ranked' : 'custom', gm: R.cfg.gm === 'dm' && R.cfg.q !== 'ranked' ? 'dm' : 'bomb', n: R.cfg.n === 3 ? 3 : 5, bots: R.cfg.bots === 0 ? 0 : 1 };
   const me = NET.members.find((x) => x.me);
   if (me && NET.role === 'guest') NET.team = me.card.t; // the leader decides the teams
   for (const x of NET.members) if (!x.me && !NET.known.has(x.id)) { NET.known.add(x.id); rememberFriend(x.card); }
@@ -6850,8 +7381,8 @@ function shuffleTeams() {
 /* called from updateLobbyText: pushes champion / nick / team / ready / map / mode changes to the room */
 function netSyncLobby() {
   if (NET.role !== 'guest') {
-    const q = settings.queue === 'ranked' ? 'ranked' : 'custom';
-    if (NET.cfg.map !== settings.map || NET.cfg.q !== q) { NET.cfg.map = settings.map; NET.cfg.q = q; NET.lastCard = ''; }
+    const q = settings.queue === 'ranked' ? 'ranked' : 'custom', gm = q === 'ranked' ? 'bomb' : settings.gm === 'dm' ? 'dm' : 'bomb', n = settings.mode === 3 ? 3 : 5, bots = q === 'ranked' || settings.roomBots !== 0 ? 1 : 0;
+    if (NET.cfg.map !== settings.map || NET.cfg.q !== q || NET.cfg.gm !== gm || NET.cfg.n !== n || NET.cfg.bots !== bots) { NET.cfg.map = settings.map; NET.cfg.q = q; NET.cfg.gm = gm; NET.cfg.n = n; NET.cfg.bots = bots; NET.lastCard = ''; }
   }
   const s = JSON.stringify(myCard());
   if (s === NET.lastCard) return;
@@ -6944,24 +7475,24 @@ function netHostStart() {
   if (game.state !== 'menu' && game.state !== 'over') return 'busy';
   const ranked = NET.cfg.q === 'ranked';
   if (ranked) shuffle(hostMembers().map((x) => x[0])).forEach((id, i) => { const t = i % 2 ? 'def' : 'atk'; if (id === myPeerId()) NET.team = t; else { const g = NET.guests.get(id); if (g) g.card.t = t; } });
-  const mem = hostMembers();
-  if (!countTeam(mem, 'atk') || !countTeam(mem, 'def')) return 'teams';
+  const mem = hostMembers(), dm = NET.cfg.gm === 'dm' && !ranked;
+  if (!dm && (countTeam(mem, 'atk') > TEAM_MAX || countTeam(mem, 'def') > TEAM_MAX)) return 'teams';
   NET.lastCard = ''; pushRoster();
   NET.mode = 'host'; NET.mid = (NET.mid || 0) + 1; NET.ev = []; NET.evSeq = 0; NET.lastAct = {}; NET.ready = {}; NET.inputs = {}; NET.readyL = false;
   game.trial = null;
   if (game.rankedSaved) { Object.assign(settings, game.rankedSaved); game.rankedSaved = null; }
-  game.ranked = ranked;
+  game.ranked = ranked; game.dm = dm; DMP.open = false;
   if (ranked) { game.rankedSaved = { map: settings.map }; settings.map = pick(MAP_IDS); }
   hidePanels(); el.menu.hidden = true; el.end.hidden = true; el.pause.hidden = true; el.hud.hidden = false;
   startMatch(mem.map(([id, card]) => ({ peer: id, me: id === myPeerId(), nick: card.n, team: card.t, champ: card.c, bskin: card.b })));
   sizeRadar();
-  const M = { mid: NET.mid, map: settings.map, r: ranked ? 1 : 0, chars: chars.map((c) => [c.id, c.team, c.agentId, c.name, c.remote || (c === player ? myPeerId() : ''), c.bskin || 'clasic']) };
+  const M = { mid: NET.mid, map: settings.map, r: ranked ? 1 : 0, dm: dm ? 1 : 0, goal: DM_GOAL, chars: chars.map((c) => [c.id, c.team, c.agentId, c.name, c.remote || (c === player ? myPeerId() : ''), c.bskin || 'clasic']) };
   for (const g of NET.guests.values()) tx(g.conn, { t: 'M', M });
   NET.started = true;
   return 'ok';
 }
 function flagsOf(c) {
-  return (c.alive ? 1 : 0) | (c.invisT > 0 ? 2 : 0) | (c.shieldT > 0 ? 4 : 0) | (c.dashT > 0 ? 8 : 0) | (c.stunT > 0 ? 16 : 0) | (c.hidden.atk ? 32 : 0) |
+  return (c.alive ? 1 : 0) | (c.invisT > 0 ? 2 : 0) | (c.shieldT > 0 || c.protT > 0 ? 4 : 0) | (c.dashT > 0 ? 8 : 0) | (c.stunT > 0 ? 16 : 0) | (c.hidden.atk ? 32 : 0) |
     (c.hidden.def ? 64 : 0) | (c.flashT > 0 ? 128 : 0) | (c.leapT > 0 ? 256 : 0) | (c.spotted ? 512 : 0) | (c.walk ? 1024 : 0) | (c.scoped ? 2048 : 0) | (c.gone ? 4096 : 0) | (c.air ? 8192 : 0) | (c.acting === 'plant' ? 16384 : 0) | (c.acting === 'defuse' ? 32768 : 0);
 }
 function buildSnap() {
@@ -6976,7 +7507,7 @@ function buildSnap() {
     T: turrets.map((t) => [r2(t.x), r2(t.z), t.team === 'atk' ? 0 : 1, r2(t.aim), Math.round(t.hp), r2(t.t)]),
     H: hooks.map((h) => [h.owner.id, r2(h.x), r2(h.z), r2(h.dx), r2(h.dz)]) };
 }
-function netHostTick(dt) {
+function netHostTick(dt, force) {
   if (!isHost()) return;
   NET.snapT -= dt; if (NET.snapT > 0) return;
   NET.snapT = 1 / 15;
@@ -6986,11 +7517,11 @@ function netHostTick(dt) {
   let E = NET.ev.slice(), size = sS + JSON.stringify(E).length;
   while (size > 7000 && E.length) { E.shift(); size = sS + JSON.stringify(E).length; }
   const msg = { t: 'S', S, E };
-  for (const g of NET.guests.values()) { const dc = g.conn.dataChannel; if (dc && dc.bufferedAmount > 262144) continue; tx(g.conn, msg); }
+  for (const g of NET.guests.values()) { const dc = g.conn.dataChannel; if (!force && dc && dc.bufferedAmount > 262144) continue; tx(g.conn, msg); }
 }
 /* the guest's camera ray for a shot: [camera height, slope, distance camera->muzzle]; the host adds the vertical spread */
 const vecPv = (v) => (Array.isArray(v) && v.length === 3 && v.every((x) => Number.isFinite(+x)) ? [clamp(+v[0], 0, 9), clamp(+v[1], -3, 3), clamp(+v[2], 0, 12)] : null);
-function netVert(pv, spread) { const s = pv[1] + rnd(-1, 1) * spread * 0.8; return { y0: pv[0] + s * pv[2], slope: s }; }
+function netVert(pv, spread) { const s = pv[1] + rnd(-1, 1) * spread * 0.45; return { y0: pv[0] + s * pv[2], slope: s }; }
 function netRemoteControl(c, dt) {
   const I = NET.inputs[c.remote];
   if (!I || !c.alive) { c.wx = c.wz = 0; return; }
@@ -7014,6 +7545,7 @@ function netRemoteControl(c, dt) {
     else if (t === 'b' && (WEAPONS[q[2]] || ITEMS[q[2]])) buy(c, q[2]);
     else if (t === 'y') { NET.ready[c.id] = true; netCheckReady(); }
     else if (t === 'j') tryJump(c);
+    else if (t === 'D' && game.dm) { if (DM_PRIMARY.includes(q[2])) c.dmW = q[2]; if (DM_SECONDARY.includes(q[3])) c.dmS = q[3]; if (c.alive && c.protT > 0) dmGear(c); }
     else if (t === 'f' && game.state === 'live' && c.burst <= 0) {
       const a = fin(q[2], c.aim), n = clamp(q[3] | 0, 1, 6), pv = vecPv(q.slice(4, 7));
       c.aim = a; c.burstA = a; if (pv) c.netPv = pv;
@@ -7033,7 +7565,7 @@ function netDropOut(id) {
   checkForfeit();
 }
 function checkForfeit() {
-  if (!isHost() || game.state === 'over' || game.state === 'menu') return;
+  if (!isHost() || game.state === 'over' || game.state === 'menu' || game.dm) return;
   for (const t of ['atk', 'def']) if (!chars.some((c) => c.team === t && !c.gone)) { game.forfeit = t === 'atk' ? 'def' : 'atk'; hideBanner(); endMatch(); return; }
 }
 function netCheckReady() {
@@ -7058,7 +7590,7 @@ function netClientStart(M, hostPeer) {
   if (game.rankedSaved) { Object.assign(settings, game.rankedSaved); game.rankedSaved = null; }
   game.rankedSaved = { map: settings.map };
   if (MAPDEFS[M.map]) settings.map = M.map;
-  game.trial = null; game.ranked = !!M.r; game.forfeit = 0;
+  game.trial = null; game.ranked = !!M.r; game.forfeit = 0; game.dm = !!M.dm; game.dmGoal = clamp(M.goal | 0 || DM_GOAL, 5, 99); DMP.open = false;
   hidePanels(); hideInvite();
   el.menu.hidden = true; el.end.hidden = true; el.pause.hidden = true; el.hud.hidden = false;
   if (!world.group || MAP.id !== settings.map || world.glb !== ASSETS.ready || world.eco !== (gfxLevel() === 'eco')) { buildWorld(settings.map); world.glb = ASSETS.ready; world.eco = gfxLevel() === 'eco'; }
@@ -7066,7 +7598,7 @@ function netClientStart(M, hostPeer) {
   chars.length = 0; clearRoundObjects(); player = null;
   for (const d of M.chars) {
     if (!Array.isArray(d)) continue;
-    const mine = d[4] === meId, team = d[1] === 'def' ? 'def' : 'atk', ag = AGENTS[d[2]] ? d[2] : DEFAULT_AGENT;
+    const mine = d[4] === meId, team = d[1] === 'def' || (game.dm && isFFA(d[1])) ? d[1] : 'atk', ag = AGENTS[d[2]] ? d[2] : DEFAULT_AGENT;
     const c = makeChar(team, ag, cleanNick(d[3]), mine);
     c.id = +d[0]; c.ai = null; c.remote = d[4] || null; c.netX = c.x; c.netZ = c.z; c.bskin = mine ? myBombKey() : validBombKey(d[5]) ? d[5] : 'clasic';
     if (mine) player = c;
@@ -7074,11 +7606,11 @@ function netClientStart(M, hostPeer) {
   if (!player) { NET.mode = null; return; }
   nextId = Math.max(...chars.map((c) => c.id)) + 1;
   for (const c of chars) c.m.ring.material = c === player ? MAT.ringMe : c.team === player.team ? MAT.ringAlly : MAT.ringFoe;
-  camSign = player.team === 'atk' ? 1 : -1;
-  Object.assign(game, { state: 'freeze', round: 0, sAtk: 0, sDef: 0, time: 0, paused: false, specId: -1 });
+  camSign = game.dm || player.team === 'atk' ? 1 : -1;
+  Object.assign(game, { state: 'freeze', round: game.dm ? 1 : 0, sAtk: 0, sDef: 0, time: 0, paused: false, specId: -1 });
   for (const c of chars) c.mvps = 0;
   hudNewMatch(); sizeRadar(); snapCamera(); hudNewRound(); openBuy(); keepAwake();
-  toast((game.ranked ? 'Ranked' : 'Meci custom') + ' pe ' + MAPDEFS[settings.map].name + '!', player.team);
+  toast((game.dm ? 'Deathmatch' : game.ranked ? 'Competitiv' : 'Meci custom') + ' pe ' + MAPDEFS[settings.map].name + '!', game.dm ? 'def' : player.team);
 }
 function netAction(type, ...args) {
   NET.actQ.push([++NET.actN, type, ...args.map((v) => (typeof v === 'number' ? r3(v) : v))]);
@@ -7109,7 +7641,7 @@ function applySnap(S) {
     if (c !== player) { c.vx = fin(a[8], 0); c.vz = fin(a[9], 0); c.walk = !!(f & 1024); c.scoped = !!(f & 2048); c.acting = f & 16384 ? 'plant' : f & 32768 ? 'defuse' : null; }
     c.hp = fin(a[4], c.hp); c.alive = !!(f & 1); c.gone = !!(f & 4096);
     if (wasAlive && !c.alive) { c.deathT = 0; c.vx = c.vz = 0; }
-    if (!wasAlive && c.alive) { c.x = c.netX; c.z = c.netZ; c.jumpY = fin(a[7], 0); c.vy = 0; }
+    if (!wasAlive && c.alive) { c.x = c.netX; c.z = c.netZ; c.jumpY = fin(a[7], 0); c.vy = 0; if (c === player && game.dm) { view.yaw = c.aim; view.pitch = 0.05; VM.drawT = 0; snapCamera(); } }
     c.invisT = f & 2 ? 1 : 0; c.shieldT = f & 4 ? 1 : 0; c.dashT = f & 8 ? 0.05 : 0; c.stunT = f & 16 ? 0.2 : 0;
     c.hidden.atk = !!(f & 32); c.hidden.def = !!(f & 64); if (f & 128) c.flashT = 0.06; c.leapT = f & 256 ? 0.05 : 0; c.spotted = !!(f & 512);
     const w = W_IDS[a[6]] || 'pistol'; if (c !== player) setLoadout(c, w);
@@ -7130,13 +7662,14 @@ function applySnap(S) {
   }
   const G = Array.isArray(S.G) ? S.G : [];
   const st = G[0], round = G[3] | 0;
-  if (round !== game.round && round > 0) { game.round = round; clearRoundObjects(); hudNewRound(); for (const c of chars) { c.x = c.netX; c.z = c.netZ; c.jumpY = c.netY || 0; c.vy = 0; c.air = false; } snapCamera(); }
+  if (round !== game.round && round > 0 && !game.dm) { game.round = round; clearRoundObjects(); hudNewRound(); for (const c of chars) { c.x = c.netX; c.z = c.netZ; c.jumpY = c.netY || 0; c.vy = 0; c.air = false; } snapCamera(); }
   game.forfeit = G[7] === 'atk' || G[7] === 'def' ? G[7] : 0;
   game.sAtk = G[4] | 0; game.sDef = G[5] | 0;
   if (st && st !== game.state && ['freeze', 'live', 'post', 'over'].includes(st)) {
     const prev = game.state; game.state = st;
-    if (st === 'freeze') { openBuy(); }
-    else if (st === 'live') { closeBuy(); toast(player.team === 'atk' ? 'Du bomba pe A sau B!' : 'Apără site-urile A și B!', player.team); Snd.go(); }
+    if (st === 'freeze') { if (!game.dm) openBuy(); }
+    else if (st === 'live') { closeBuy(); toast(game.dm ? 'Luptă! Primul la ' + game.dmGoal + ' de ucideri' : player.team === 'atk' ? 'Du bomba pe A sau B!' : 'Apără site-urile A și B!', game.dm ? 'def' : player.team); Snd.go(); }
+    else if (st === 'over' && prev !== 'over' && game.dm) { hideBanner(); showEnd(dmRank()[0] === player); }
     else if (st === 'over' && prev !== 'over') { hideBanner(); const my = player.team === 'atk' ? game.sAtk : game.sDef, other = player.team === 'atk' ? game.sDef : game.sAtk; showEnd(game.forfeit ? game.forfeit === player.team : my > other); }
   }
   game.timer = fin(G[1], game.timer); game.freezeT = fin(G[2], 0); game.planted = !!G[6];
@@ -7177,7 +7710,7 @@ function applyEvents(E) {
   }
 }
 function playEvent(t, a) {
-  if (t === 'b') { spawnVisualBullet(fin(a[0], 0), fin(a[1], 0), fin(a[2], 0), a[3] === 'def' ? 'def' : 'atk', WEAPONS[a[4]] ? a[4] : 'pistol', a[5], fin(a[6], -1), clamp(fin(a[7], 1), 0, 9), clamp(fin(a[8], 0), -3, 3), a[9] | 0); }
+  if (t === 'b') { spawnVisualBullet(fin(a[0], 0), fin(a[1], 0), fin(a[2], 0), a[3] === 'def' || isFFA(a[3]) ? a[3] : 'atk', WEAPONS[a[4]] ? a[4] : 'pistol', a[5], fin(a[6], -1), clamp(fin(a[7], 1), 0, 9), clamp(fin(a[8], 0), -3, 3), a[9] | 0); }
   else if (t === 'k') {
     const src = charById(a[0]), v = charById(a[1]); if (!v) return;
     v.alive = false; v.deathT = 0;
@@ -7204,6 +7737,7 @@ function playEvent(t, a) {
     if (mvp) { mvp.roundKills = a[4] | 0; mvp.roundDmg = a[5] | 0; mvp.mvps = (mvp.mvps || 0) + 1; }
     showBanner(a[0] === 'def' ? 'def' : 'atk', String(a[1]).slice(0, 60), gain, mvp);
     if (a[0] === player.team) Snd.win(); else Snd.lose();
+  } else if (t === 'W') { dmBanner(charById(a[0]));
   } else if (t === 'A') { const s = charById(a[0]); if (s === player) { announce(String(a[1]).slice(0, 24), String(a[2]).replace(/[^a-z0-9 ]/g, ''), a[3] ? String(a[3]).slice(0, 60) : ''); Snd.streak(a[4] | 0); } }
 }
 function spawnVisualBullet(x, z, ang, team, wid, kind, end, y0, slope, oid) {
@@ -7248,7 +7782,7 @@ function clientStep(dt) {
 
 
 /* ================= room panel, party in the lobby, crosshair editor, C4 shop tab ================= */
-function hidePanels() { for (const id of ['shop', 'champs', 'modeSel', 'rankPanel', 'friends', 'xhEd']) { const p = $('#' + id); if (p) p.hidden = true; } }
+function hidePanels() { for (const id of ['shop', 'champs', 'modeSel', 'rankPanel', 'friends', 'xhEd', 'setPage']) { const p = $('#' + id); if (p) p.hidden = true; } }
 function netUI() { renderRoom(); if (game.state === 'menu') updateLobbyText(); }
 function lobbyRoomChanged() { lobby.partyDirty = true; if (game.state === 'menu') updateLobbyText(); renderRoom(); }
 function lobbyMemberJoined(id) { lobby.joinFx[id] = performance.now(); }
@@ -7285,21 +7819,25 @@ function renderRoom() {
   $('#rmTeams').innerHTML = h;
   const mapName = (MAPDEFS[NET.role === 'guest' ? NET.cfg.map : settings.map] || MAPDEFS.oaza).name;
   const q = NET.role === 'guest' ? NET.cfg.q : settings.queue === 'ranked' ? 'ranked' : 'custom';
-  const qSeg = '<div class="seg" id="rmQ"><button class="chunky' + (q === 'custom' ? ' on' : '') + '" data-v="custom">CUSTOM</button><button class="chunky' + (q === 'ranked' ? ' on' : '') + '" data-v="ranked">RANKED</button></div>';
+  const qSeg = '<div class="seg" id="rmQ"><button class="chunky' + (q === 'custom' ? ' on' : '') + '" data-v="custom">CUSTOM</button><button class="chunky' + (q === 'ranked' ? ' on' : '') + '" data-v="ranked">COMPETITIV</button></div>';
+  const gmTxt = gmName(NET.role === 'guest' ? NET.cfg.gm : q === 'ranked' ? 'bomb' : settings.gm, NET.role === 'guest' ? NET.cfg.n : settings.mode);
+  const botsOn = NET.role === 'guest' ? NET.cfg.bots !== 0 : settings.roomBots !== 0;
+  const botSeg = q === 'ranked' ? '' : '<div class="row"><span>Boți în locurile libere:</span><div class="seg" id="rmBots"><button class="chunky' + (botsOn ? ' on' : '') + '" data-v="1">DA</button><button class="chunky' + (botsOn ? '' : ' on') + '" data-v="0">NU</button></div></div>';
+  const modeRow = '<div class="row"><span>Joc: <b>' + gmTxt + '</b></span><button class="chunky" id="rmMode">Schimbă</button></div>' + (gmTxt === 'DEATHMATCH' ? '<p class="help">În Deathmatch echipele de mai sus nu contează: fiecare e pentru el.</p>' : '');
   let c = '';
   if (NET.role === 'solo') {
-    c = '<p class="help">Trimite-le prietenilor codul tău sau scrie codul lor în dreapta și apasă INVITĂ. Cine intră apare lângă tine în lobby. Meciurile custom și ranked sunt doar cu oameni.</p>' +
-      '<div class="row"><span>Mod:</span>' + qSeg + '</div>' +
+    c = '<p class="help">Trimite-le prietenilor codul tău sau scrie codul lor în dreapta și apasă INVITĂ. Cine intră apare lângă tine în lobby. Meciurile custom și competitive se joacă aici; locurile libere se umplu cu boți.</p>' +
+      '<div class="row"><span>Mod:</span>' + qSeg + '</div>' + modeRow + botSeg +
       '<div class="row"><span>Harta: <b>' + (q === 'ranked' ? 'la întâmplare' : mapName) + '</b></span>' + (q === 'ranked' ? '' : '<button class="chunky" id="rmMap">Schimbă</button>') + '</div>' +
       '<div class="row"><button class="chunky" id="rmTrain">Joacă Antrenament cu boți</button></div>';
   } else if (NET.role === 'leader') {
     const ready = mem.filter((m) => !m.leader && m.card.y).length, others = mem.length - 1;
-    c = '<div class="row">' + qSeg + '<span>' + ready + '/' + others + ' gata</span></div>' +
+    c = '<div class="row">' + qSeg + '<span>' + ready + '/' + others + ' gata</span></div>' + modeRow + botSeg +
       '<div class="row"><span>Harta: <b>' + (q === 'ranked' ? 'la întâmplare' : mapName) + '</b></span>' + (q === 'ranked' ? '' : '<button class="chunky" id="rmMap">Schimbă</button>') + '<button class="chunky" id="rmShuffle">Amestecă echipele</button></div>' +
-      (q === 'ranked' ? '<p class="help">Ranked: harta și echipele se aleg la întâmplare. Fiecare primește sau pierde RP după rezultat.</p>' : '');
+      (q === 'ranked' ? '<p class="help">Competitiv: harta și echipele se aleg la întâmplare. Fiecare primește sau pierde RP după rezultat.</p>' : '');
   } else {
     c = '<p class="help">Liderul alege modul și harta, apoi pornește meciul.</p>' +
-      '<div class="row"><span>Mod: <b>' + (q === 'ranked' ? 'RANKED' : 'CUSTOM') + '</b> · Harta: <b>' + (q === 'ranked' ? 'la întâmplare' : mapName) + '</b></span></div>' +
+      '<div class="row"><span>Mod: <b>' + (q === 'ranked' ? 'COMPETITIV' : 'CUSTOM') + ' · ' + gmTxt + '</b> · Harta: <b>' + (q === 'ranked' ? 'la întâmplare' : mapName) + '</b> · Boți: <b>' + (q === 'ranked' || botsOn ? 'da' : 'nu') + '</b></span></div>' +
       '<div class="row"><button class="chunky" id="rmLeave">Ieși din cameră</button></div>';
   }
   $('#rmCtl').innerHTML = c;
@@ -7338,13 +7876,15 @@ function wireRoom() {
     else if (b.id === 'rmCopy') copyText(profile.code).then((ok) => lobbyToast(ok ? 'Codul #' + profile.code + ' e copiat. Trimite-l prietenilor!' : 'Codul tău: #' + profile.code));
     else if (b.id === 'rmInvite') { const v = $('#rmCodeIn').value; inviteFriend(v); }
     else if (b.id === 'rmJoin') { const v = $('#rmCodeIn').value; addFriendCode(v); netJoinCode(v); }
-    else if (b.id === 'rmMap') { openPanel('modeSel'); refreshMenu(); }
+    else if (b.id === 'rmMap') { refreshMenu(); openPanel('modeSel'); }
     else if (b.id === 'rmShuffle') shuffleTeams();
     else if (b.id === 'rmStart' || b.id === 'rmStart2') startRoomMatch();
     else if (b.id === 'rmReady' || b.id === 'rmReady2') { NET.readyL = !NET.readyL; updateLobbyText(); renderRoom(); }
     else if (b.id === 'rmLeave') { leaveRoom('self'); netStatus(''); }
     else if (b.id === 'rmTrain') { hidePanels(); settings.queue = 'train'; saveSettings(); game.trial = null; keepAwake(); enterGame(); }
-    else if (b.closest('#rmQ') && d.v) { if (NET.role !== 'guest') { settings.queue = d.v; saveSettings(); updateLobbyText(); renderRoom(); } }
+    else if (b.closest('#rmQ') && d.v) setQueue(d.v);
+    else if (b.closest('#rmBots') && d.v && NET.role !== 'guest') { settings.roomBots = d.v === '0' ? 0 : 1; saveSettings(); updateLobbyText(); renderRoom(); }
+    else if (b.id === 'rmMode') { refreshMenu(); openPanel('modeSel'); }
   });
   const nk = $('#rmNick');
   const saveNick = () => { const n = cleanNick(nk.value); if (n !== profile.nick) { profile.nick = n; saveProfile(); updateLobbyText(); } nk.value = n; };
@@ -7405,7 +7945,6 @@ function wireXhEd() {
   $('#xeRun').addEventListener('click', () => { XE.run = !XE.run; Snd.ui(); renderXhEd(); });
   $('#xeFoe').addEventListener('click', () => { XE.foe = !XE.foe; Snd.ui(); renderXhEd(); });
   $('#xhOpen').addEventListener('click', openXhEd);
-  $('#xhPause').addEventListener('click', openXhEd);
 }
 
 /* ---------------- C4 skins in the shop ---------------- */
@@ -7532,8 +8071,8 @@ function openHudEd(from) {
   HUDED.on = true; HUDED.from = from || null; HUDED.sel = null; HUDED.drag = null;
   HUDED.work = JSON.parse(JSON.stringify((H.slots[H.cur - 1] || {})[hudOrient()] || {}));
   HUDED.orient = hudOrient();
-  HUDED.prev = { hud: el.hud.hidden, controls: el.controls.hidden, pause: el.pause.hidden, menu: el.menu.hidden, modeSel: $('#modeSel').hidden };
-  el.pause.hidden = true; el.menu.hidden = true; $('#modeSel').hidden = true;
+  HUDED.prev = { hud: el.hud.hidden, controls: el.controls.hidden, pause: el.pause.hidden, menu: el.menu.hidden, setPage: $('#setPage').hidden };
+  el.pause.hidden = true; el.menu.hidden = true; $('#setPage').hidden = true;
   el.hud.hidden = false; el.controls.hidden = false;
   $('#app').classList.add('hud-edit');
   for (const E of HUD_EL) { const e = $(E.sel); if (e) e.dataset.hk = E.k; }
@@ -7548,7 +8087,7 @@ function closeHudEd() {
   for (const e of document.querySelectorAll('.he-on')) e.classList.remove('he-on');
   $('#hudEd').hidden = true;
   const P = HUDED.prev || {};
-  el.hud.hidden = !!P.hud; el.controls.hidden = !!P.controls; el.menu.hidden = !!P.menu; $('#modeSel').hidden = !!P.modeSel; el.pause.hidden = !!P.pause;
+  el.hud.hidden = !!P.hud; el.controls.hidden = !!P.controls; el.menu.hidden = !!P.menu; $('#setPage').hidden = !!P.setPage; el.pause.hidden = !!P.pause;
   applyHud(); if (typeof renderHudMini === 'function') renderHudMini(); Snd.ui();
 }
 function renderHudEd() {
@@ -7821,12 +8360,16 @@ function hudNewMatch() {
   }
   el.feed.innerHTML = '';
   setHTML($('#hudFace'), '<img alt="" src="portrait_' + player.agentId + '.png">');
+  toggleClass($('#scorebox'), 'dm', !!game.dm); toggleClass(el.hud, 'dm', !!game.dm);
+  setText($('.side.atk .tname'), game.dm ? 'TU' : 'ATAC'); setText($('.side.def .tname'), game.dm ? 'LIDER' : 'APĂRARE');
+  setText(el.buyBtn, game.dm ? 'ARME' : 'ARSENAL');
 }
 function hudNewRound() { el.feed.innerHTML = ''; nums.length = 0; hideBanner(); clearInputs(); }
 function computeHint() {
   const p = player;
-  if (game.state === 'freeze') return el.buy.hidden ? 'Runda începe în ' + Math.ceil(game.freezeT) + 's' : '';
+  if (game.state === 'freeze') return el.buy.hidden ? (game.dm ? 'Meciul începe în ' : 'Runda începe în ') + Math.ceil(game.freezeT) + 's' : '';
   if (game.state !== 'live' || !p.alive) return '';
+  if (game.dm) return p.protT > 0 || (NET.mode === 'client' && p.shieldT > 0) ? 'Ești protejat câteva clipe, până tragi' : '';
   if (p.team === 'atk') {
     if (bomb.carrier === p) return siteAtPos(p.x, p.z) ? (touchMode ? 'Ține apăsat PLANTEAZĂ' : 'Ține apăsat E ca să plantezi') : 'Ai bomba: du-o pe site-ul A sau B';
     if (bomb.state === 'dropped') return 'Bomba e pe jos: ia-o!';
@@ -7865,14 +8408,16 @@ function updateHUD() {
   show(sb, hasSniper && touchMode);
   if (hasSniper) { const lv = player.scopeLvl || 0; toggleClass(sb, 'on', lv > 0); setText($('#scopeLbl'), lv === 0 ? 'LUNETĂ' : lv === 1 ? 'ZOOM ×2' : 'ZOOM ×5'); }
   const p = player, wid = curW(p), W = WEAPONS[wid], am = p.ammo[wid];
-  setText(el.sAtk, String(game.sAtk)); setText(el.sDef, String(game.sDef));
+  let lead = null;
+  if (game.dm) { const R = dmRank(); lead = R[0] === p ? R[1] : R[0]; setText(el.sAtk, String(p.kills)); setText(el.sDef, String(lead ? lead.kills : 0)); setText($('.side.def .tname'), R[0] === p ? '#2' : 'LIDER'); }
+  else { setText(el.sAtk, String(game.sAtk)); setText(el.sDef, String(game.sDef)); }
   let clk = fmtTime(game.timer), cls = '';
   if (game.state === 'freeze') { clk = fmtTime(game.freezeT); cls = 'freeze'; }
   else if (bomb.state === 'planted') { clk = fmtTime(bomb.timer); cls = 'bomb'; }
   setText(el.clock, clk); if (el.clock.className !== cls) el.clock.className = cls;
-  setText(el.roundNo, 'RUNDA ' + game.round);
+  setText(el.roundNo, game.dm ? 'PRIMUL LA ' + game.dmGoal : 'RUNDA ' + game.round);
   for (const c of chars) if (c.dot) toggleClass(c.dot, 'dead', !c.alive);
-  setText(el.money, '$' + p.money);
+  show(el.money, !game.dm); setText(el.money, '$' + p.money);
   setText(el.hpN, String(Math.max(0, Math.ceil(p.hp))));
   const hw = Math.round(clamp(p.hp / p.maxHp, 0, 1) * 100) + '%'; if (el.hpBar._w !== hw) { el.hpBar._w = hw; el.hpBar.style.width = hw; }
   show(el.arBox, p.armor > 0); setText(el.arN, String(Math.ceil(p.armor)));
@@ -7881,7 +8426,7 @@ function updateHUD() {
   setText(el.ammo, W.melee ? '∞' : p.reloadT > 0 ? 'reîncarc…' : am.mag + ' / ' + am.res);
   toggleClass(el.ammo, 'low', !W.melee && am.mag <= Math.ceil(W.mag * 0.25));
   setHTML(el.inv, (p.armor > 0 ? '<img class="ii" alt="Vestă" src="icon_armor.png">' : '') + (p.he ? '<img class="ii" alt="Grenadă" src="icon_he.png">' : '') + (p.smoke ? '<img class="ii" alt="Fum" src="icon_smoke.png">' : '') + (p.kit ? '<img class="ii" alt="Kit" src="icon_kit.png">' : '') + (bomb.state === 'carried' && bomb.carrier === p ? '<em class="bomb">BOMBĂ</em>' : ''));
-  show(el.buyBtn, game.state === 'freeze' && el.buy.hidden);
+  show(el.buyBtn, game.dm ? game.state === 'live' && p.alive && !DMP.open : game.state === 'freeze' && el.buy.hidden);
   let act = null;
   if (p.alive && game.state === 'live') { if (canPlant(p)) act = 'plant'; else if (canDefuse(p)) act = 'defuse'; }
   show(el.act, !!act && touchMode);
@@ -7903,8 +8448,10 @@ function updateHUD() {
   if (hn !== el.hint._t) { setText(el.hint, hn); el.hint._at = now; el.hint.classList.remove('fade'); }
   else if (hn && now - (el.hint._at || 0) > 4500) toggleClass(el.hint, 'fade', true);
   let cm = '';
-  if (!p.alive) { const s = spectateTarget(); cm = 'Ai murit' + (s && s.name ? ' · urmărești: ' + s.name : ''); }
+  if (!p.alive && game.dm) cm = game.state === 'live' ? (NET.mode === 'client' ? 'Ai murit · reapari imediat' : 'Ai murit · reapari în ' + Math.max(1, Math.ceil(p.respawnT || 0)) + '…') : '';
+  else if (!p.alive) { const s = spectateTarget(); cm = 'Ai murit' + (s && s.name ? ' · urmărești: ' + s.name : ''); }
   setText(el.center, cm);
+  updateDMPick();
   if (!el.buy.hidden) updateBuyUI();
 }
 let toastTimer = null;
@@ -7927,8 +8474,8 @@ function addFeed(src, victim, wid) {
   const nm = (c) => (c === player ? 'Tu' : c.name);
   const wn = WEAPONS[wid] ? WEAPONS[wid].short : wid === 'he' ? 'Grenadă' : wid === 'bomb' ? 'Bombă' : wid === 'turret' ? 'Turelă' : wid === 'super' ? 'Super' : '';
   const wi = WEAPONS[wid] || wid === 'he' ? '<img class="kf" alt="' + wn + '" src="icon_' + wid + '.png">' : wid === 'super' || wid === 'turret' ? '<span class="kfs">★ ' + wn + '</span>' : '<span>' + wn + '</span>';
-  if (src && src !== victim) d.innerHTML = '<b class="' + src.team + '">' + nm(src) + '</b>' + wi + '<b class="' + victim.team + '">' + nm(victim) + '</b>';
-  else d.innerHTML = '<b class="' + victim.team + '">' + nm(victim) + '</b><span>' + (wn || 'a căzut') + '</span>';
+  if (src && src !== victim) d.innerHTML = '<b class="' + vteam(src.team) + '">' + nm(src) + '</b>' + wi + '<b class="' + vteam(victim.team) + '">' + nm(victim) + '</b>';
+  else d.innerHTML = '<b class="' + vteam(victim.team) + '">' + nm(victim) + '</b><span>' + (wn || 'a căzut') + '</span>';
   if (src === player || victim === player) d.classList.add('me');
   el.feed.prepend(d);
   while (el.feed.children.length > 5) el.feed.lastChild.remove();
@@ -8070,7 +8617,7 @@ function updateBuyUI() {
   $('#bmDetail').innerHTML = detailHTML(p, BUY.sel);
   $('#bmLoad').innerHTML = loadoutHTML(p);
 }
-function openBuy() { if (!player || game.state !== 'freeze') return; BUY.cat = defaultBuyCat(); BUY.sel = null; BUY.sig = ''; el.buy.hidden = false; updateBuyUI(); }
+function openBuy() { if (game.dm) { if (player && game.state !== 'over') toggleDMPick(); return; } if (!player || game.state !== 'freeze') return; BUY.cat = defaultBuyCat(); BUY.sel = null; BUY.sig = ''; el.buy.hidden = false; updateBuyUI(); }
 function closeBuy() { el.buy.hidden = true; }
 function toggleBuy() { if (el.buy.hidden) openBuy(); else closeBuy(); }
 function readyUp() {
@@ -8109,15 +8656,15 @@ function updateLobbyText() {
   $('#modeBtn').style.setProperty('--mapimg', 'url(map_' + (MAPDEFS[mapId] ? mapId : 'oaza') + '.jpg)');
   for (const b of document.querySelectorAll('#queueSw button')) { b.classList.toggle('on', b.dataset.v === q); b.disabled = guest || (party && b.dataset.v === 'train'); }
   const mb = $('#modeBtn'), rk = rankOf(profile.rank.rp);
-  const mk = q + profile.rank.rp + '|' + seasonDaysLeft() + '|' + roomSize();
+  const M = modeCfg(), mk = q + profile.rank.rp + '|' + seasonDaysLeft() + '|' + roomSize() + '|' + M.n;
   if (mb.dataset.k !== mk) {
     mb.dataset.k = mk; mb.classList.toggle('ranked', ranked);
-    mb.innerHTML = ranked ? rankBadge(rk.tier, rk.div, 58) + '<span class="rk-t"><small>RANKED · SEZONUL ' + seasonNumber() + '</small><b>' + rk.name.toUpperCase() + '</b><span class="rk-bar"><i style="width:' + Math.round(rk.prog * 100) + '%"></i><em>' + (rk.tier < 6 ? rk.pts + ' / 100 RP' : rk.pts + ' RP') + '</em></span><span>' + (party ? roomSize() + ' jucători în cameră' : 'doar cu oameni · invită prieteni') + '</span></span>'
+    mb.innerHTML = ranked ? rankBadge(rk.tier, rk.div, 58) + '<span class="rk-t"><small>COMPETITIV · SEZONUL ' + seasonNumber() + '</small><b>' + rk.name.toUpperCase() + '</b><span class="rk-bar"><i style="width:' + Math.round(rk.prog * 100) + '%"></i><em>' + (rk.tier < 6 ? rk.pts + ' / 100 RP' : rk.pts + ' RP') + '</em></span><span>BOMBĂ ' + M.n + 'v' + M.n + ' · ' + (party ? roomSize() + ' în cameră' : 'cu prietenii din cameră') + '</span></span>'
       : '<small>' + (train ? 'ANTRENAMENT · CU BOȚI' : 'MECI CUSTOM') + '</small><b id="modeMap"></b><span id="modeInfo"></span>';
   }
   if (!ranked) {
-    setText($('#modeInfo'), train ? settings.mode + ' vs ' + settings.mode + ' · ' + teamTxt + ' · boți ' + diffTxt : party ? roomSize() + ' jucători în cameră' : 'invită prieteni ca să joci');
-    setText($('#modeMap'), 'BOMBĂ · ' + (MAPDEFS[mapId] || MAPDEFS.oaza).name.toUpperCase());
+    setText($('#modeInfo'), train ? (M.gm === 'dm' ? DM_N + ' jucători · boți ' + diffTxt : M.n + ' vs ' + M.n + ' · ' + teamTxt + ' · boți ' + diffTxt) : party ? roomSize() + ' jucători în cameră' : 'invită prieteni ca să joci');
+    setText($('#modeMap'), gmName(M.gm, M.n) + ' · ' + (MAPDEFS[mapId] || MAPDEFS.bazar).name.toUpperCase());
   }
   const pb = $('#playBtn');
   pb.classList.toggle('ranked', ranked && !guest);
@@ -8238,8 +8785,20 @@ function buildMenu() {
     b.innerHTML = '<div class="img" style="background-image:url(map_' + id + '.jpg),' + grads[id] + '"></div><span><b>' + D.name + '</b><small>' + D.sub + '</small></span>';
     mc.appendChild(b);
   }
-  bindSeg('#optMap', 'map'); bindSeg('#optAssist', 'assist');
-  bindSeg('#optTeam', 'team'); bindSeg('#optMode', 'mode', Number); bindSeg('#optDiff', 'diff'); bindSeg('#optGfx', 'gfx', null, applyGfx);
+  bindSeg('#optMap', 'map');
+  bindSeg('#optTeam', 'team'); bindSeg('#optDiff', 'diff');
+  $('#optGm').addEventListener('click', (e) => {
+    const b = e.target.closest('.gm-card'); if (!b) return;
+    Snd.init(); Snd.ui();
+    if (NET.role === 'guest') { lobbyToast('Modul îl alege liderul camerei.'); return; }
+    if (b.classList.contains('locked')) { lobbyToast('Deathmatch se joacă în Antrenament sau Custom.'); return; }
+    settings.gm = b.dataset.gm === 'dm' ? 'dm' : 'bomb'; if (b.dataset.n) settings.mode = +b.dataset.n === 3 ? 3 : 5;
+    saveSettings(); refreshMenu(); renderRoom();
+  });
+  $('#msQueue').addEventListener('click', (e) => { const b = e.target.closest('button[data-v]'); if (!b || b.disabled) return; setQueue(b.dataset.v); });
+  $('#msPlay').addEventListener('click', () => { if (NET.role !== 'guest') $('#modeSel').hidden = true; playPressed(); renderModePage(); });
+  $('#modeSel').addEventListener('click', (e) => { if (e.target.closest('#msRankBtn')) { renderRankPanel(); openPanel('rankPanel'); } });
+  wireSettings();
   refreshMenu();
   const menu = $('#menu');
   menu.addEventListener('pointerdown', (e) => { if (e.target !== menu) return; lobby.drag = { x: e.clientX, t: performance.now(), x0: e.clientX, y0: e.clientY, t0: performance.now() }; lobby.spin = 0; try { menu.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } });
@@ -8259,11 +8818,92 @@ function bindSeg(sel, key, conv, after) {
   });
 }
 function refreshMenu() {
-  for (const [sel, key] of [['#optTeam', 'team'], ['#optMode', 'mode'], ['#optDiff', 'diff'], ['#optMap', 'map'], ['#optGfx', 'gfx'], ['#optAssist', 'assist']])
+  for (const [sel, key] of [['#optTeam', 'team'], ['#optDiff', 'diff'], ['#optGfx', 'gfx'], ['#optSnd', 'snd']])
     for (const b of document.querySelectorAll(sel + ' button[data-v]')) b.classList.toggle('on', String(settings[key]) === b.dataset.v);
+  for (const f of SLIDERS) f();
   updateLobbyText();
+  renderModePage();
 }
-const openPanel = (id) => { $('#' + id).hidden = false; Snd.init(); Snd.ui(); };
+/* ---------------- menus are pages: they slide in over the lobby (or the match) and slide out again ---------------- */
+const PAGE_IDS = ['shop', 'friends', 'champs', 'modeSel', 'rankPanel', 'xhEd', 'setPage', 'pause', 'end'];
+let PAGE_EL = null;
+const pageEls = () => PAGE_EL || (PAGE_EL = PAGE_IDS.map((id) => document.getElementById(id)).filter(Boolean));
+function openPanel(id) {
+  const p = $('#' + id); if (!p) return;
+  const fresh = p.hidden || p.classList.contains('pg-out');
+  clearTimeout(p._pgT); p.classList.remove('pg-out'); p.hidden = false;
+  if (fresh) {
+    p.classList.remove('pg-enter'); void p.offsetWidth; p.classList.add('pg-enter');
+    p._pgT = setTimeout(() => p.classList.remove('pg-enter'), 950);
+    const b = p.querySelector('.pg-body'); if (b) b.scrollTop = 0;
+  }
+  Snd.init(); Snd.ui();
+}
+function closePage(id) {
+  const p = $('#' + id); if (!p || p.hidden) return;
+  clearTimeout(p._pgT); p.classList.remove('pg-enter'); p.classList.add('pg-out');
+  p._pgT = setTimeout(() => { p.hidden = true; p.classList.remove('pg-out'); if (game.state === 'menu' && !pageEls().some((q) => !q.hidden)) lobbyReturn(); }, 190);
+}
+/* back in the lobby: its buttons slide in again */
+function lobbyReturn() { const m = el.menu; m.classList.remove('lb-in'); void m.offsetWidth; m.classList.add('lb-in'); clearTimeout(m._lbT); m._lbT = setTimeout(() => m.classList.remove('lb-in'), 700); }
+/* an opaque page hides everything behind it: the 3D scene is not drawn meanwhile (the match itself keeps running) */
+function pageCovers() { for (const p of pageEls()) if (!p.hidden && !p.classList.contains('pg-enter') && !p.classList.contains('pg-out')) return true; return false; }
+/* ---------------- settings page: sound, volume, sensitivity, field of view, graphics, crosshair, HUD ---------------- */
+const SLIDERS = [];
+function bindSlider(sel, key, fmt, apply) {
+  const i = $(sel), out = $(sel + 'V'); if (!i) return;
+  const show = () => { if (document.activeElement !== i) i.value = settings[key]; setText(out, fmt(settings[key])); i.style.setProperty('--v', ((settings[key] - +i.min) / (+i.max - +i.min)) * 100 + '%'); };
+  i.addEventListener('input', () => { settings[key] = +i.value; show(); if (apply) apply(); });
+  i.addEventListener('change', () => { saveSettings(); Snd.init(); Snd.ui(); });
+  SLIDERS.push(show); show();
+}
+const applySens = () => { view.sens = 0.0068 * (settings.sens || 5) / 5; };
+function wireSettings() {
+  bindSeg('#optSnd', 'snd', Number, () => Snd.setOn(!!settings.snd));
+  bindSlider('#optVol', 'vol', (v) => String(v), () => { if (!settings.snd && settings.vol > 0) { settings.snd = 1; refreshMenu(); } Snd.setOn(!!settings.snd); });
+  bindSlider('#optSens', 'sens', (v) => (+v).toFixed(1), applySens);
+  bindSlider('#optFov', 'fov', (v) => v + '°');
+  bindSeg('#optGfx', 'gfx', null, applyGfx);
+}
+/* ---------------- game mode page ---------------- */
+function setQueue(v) {
+  if (NET.role === 'guest' || settings.queue === v || (v === 'train' && roomSize() > 1)) return;
+  settings.queue = v === 'ranked' ? 'ranked' : v === 'custom' ? 'custom' : 'train';
+  saveSettings(); Snd.init(); Snd.ui(); refreshMenu(); renderRoom();
+}
+/* colours for a team: in deathmatch you are blue and everybody else is an enemy */
+const vteam = (t) => (t === 'atk' || t === 'def' ? t : player && t === player.team ? 'def' : 'atk');
+const teamCss = (t) => 'var(--' + vteam(t) + ')';
+const gmName = (gm, n) => (gm === 'dm' ? 'DEATHMATCH' : 'BOMBĂ ' + n + 'v' + n);
+function modeCfg() { const g = NET.role === 'guest'; return { gm: g ? NET.cfg.gm : settings.queue === 'ranked' ? 'bomb' : settings.gm, n: g ? NET.cfg.n : settings.mode, map: g ? NET.cfg.map : settings.map, q: g ? NET.cfg.q : settings.queue }; }
+function renderModePage() {
+  const page = $('#modeSel'); if (!page) return;
+  const guest = NET.role === 'guest', party = roomSize() > 1, M = modeCfg(), q = M.q, ranked = q === 'ranked', train = q === 'train';
+  for (const b of document.querySelectorAll('#msQueue button')) { b.classList.toggle('on', b.dataset.v === q); b.disabled = guest || (party && b.dataset.v === 'train'); }
+  for (const b of document.querySelectorAll('#optGm .gm-card')) {
+    const dm = b.dataset.gm === 'dm';
+    b.classList.toggle('on', dm ? M.gm === 'dm' : M.gm === 'bomb' && +b.dataset.n === M.n);
+    b.classList.toggle('locked', dm && ranked);
+  }
+  for (const b of document.querySelectorAll('#optMap button[data-v]')) b.classList.toggle('on', b.dataset.v === M.map);
+  $('#optMap').classList.toggle('dis', ranked || guest);
+  setText($('#msMapNote'), ranked ? '· la întâmplare în Competitiv' : guest ? '· o alege liderul camerei' : '');
+  const showTeam = train && M.gm === 'bomb', showBots = !guest && !ranked;
+  const tb = page.querySelector('.ms-train'), bb = page.querySelector('.ms-bots');
+  tb.hidden = !showTeam; bb.hidden = !showBots; tb.classList.toggle('solo', !showBots); bb.classList.toggle('solo', !showTeam);
+  const rk = $('#msRank'); rk.hidden = !ranked;
+  if (ranked) {
+    const r = rankOf(profile.rank.rp), k = r.tier + ':' + r.div + ':' + r.pts;
+    if (rk.dataset.k !== k) { rk.dataset.k = k; rk.innerHTML = rankBadge(r.tier, r.div, 52) + '<span class="rk-t"><small>SEZONUL ' + seasonNumber() + ' · ' + seasonDaysLeft() + ' ZILE</small><b>' + r.name.toUpperCase() + '</b><span class="rk-bar"><i style="width:' + Math.round(r.prog * 100) + '%"></i><em>' + (r.tier < 6 ? r.pts + ' / 100 RP' : r.pts + ' RP') + '</em></span></span><button class="chunky" id="msRankBtn">Ranguri</button>'; }
+  }
+  setText($('#msNote'), guest ? 'Liderul camerei alege modul și harta, apoi pornește meciul.'
+    : train ? (M.gm === 'dm' ? 'Tu și ' + (DM_N - 1) + ' boți, fiecare pentru el. Reapari după 2 secunde, iar la început ai câteva clipe de protecție.' : '')
+    : ranked ? 'Competitiv: cu prietenii din cameră (cel puțin 2). Locurile libere se umplu cu boți grei. Câștigi sau pierzi RP.'
+    : 'Meci cu prietenii din cameră. Locurile libere se umplu cu boți.');
+  const pb = $('#msPlay');
+  pb.classList.toggle('ranked', ranked && !guest); pb.classList.toggle('ready', guest && NET.readyL);
+  setText(pb, guest ? (NET.readyL ? 'GATA ✓' : 'SUNT GATA') : train ? 'JOACĂ' : party ? 'PORNEȘTE' : 'INVITĂ PRIETENI');
+}
 function loadSettings() {
   try { const s = JSON.parse(localStorage.getItem('blitzsquad.settings') || 'null'); if (s) for (const k in settings) if (s[k] !== undefined) settings[k] = s[k]; } catch (e) { /* storage unavailable */ }
   if (!AGENTS[settings.agent]) settings.agent = DEFAULT_AGENT;
@@ -8274,8 +8914,15 @@ function loadSettings() {
   if (!['auto', 'high', 'balanced', 'eco'].includes(settings.gfx)) settings.gfx = 'auto';
   if (settings.fireV !== 2) { settings.autoFire = false; settings.fireV = 2; }
   settings.autoFire = false; // auto-fire is gone: every shot is aimed by the player
-  if (settings.aimV !== 2) { settings.assist = 'normal'; settings.aimV = 2; }
-  if (!['normal', 'low', 'off'].includes(settings.assist)) settings.assist = 'normal';
+  settings.assist = 'off'; // no aim assist any more
+  settings.fov = clamp(Math.round(+settings.fov || FOV_DEF), FOV_MIN, FOV_MAX);
+  if (settings.gm !== 'dm') settings.gm = 'bomb';
+  if (!DM_PRIMARY.includes(settings.dmW)) settings.dmW = 'rifle';
+  if (!DM_SECONDARY.includes(settings.dmS)) settings.dmS = 'pistol';
+  settings.snd = settings.snd === 0 ? 0 : 1;
+  settings.vol = clamp(Math.round(Number.isFinite(+settings.vol) ? +settings.vol : 80), 0, 100);
+  settings.roomBots = settings.roomBots === 0 ? 0 : 1;
+  settings.sens = clamp(Number.isFinite(+settings.sens) ? +settings.sens : 5, 2, 10);
   if (settings.queue === 'classic') settings.queue = 'train';
   if (!['train', 'custom', 'ranked'].includes(settings.queue)) settings.queue = 'train';
   settings.xh = cleanXh(settings.xh);
@@ -8292,8 +8939,8 @@ async function keepAwake() {
 function enterGame() {
   if (game.rankedSaved) { Object.assign(settings, game.rankedSaved); game.rankedSaved = null; }
   if (roomSize() > 1) return;
-  game.ranked = false; game.train = !game.trial;
-  hidePanels(); hideInvite();
+  game.ranked = false; game.train = !game.trial; game.dm = settings.gm === 'dm';
+  hidePanels(); hideInvite(); DMP.open = false;
   el.menu.hidden = true; el.end.hidden = true; el.pause.hidden = true; el.hud.hidden = false;
   startMatch(); sizeRadar();
 }
@@ -8303,21 +8950,34 @@ function playPressed() {
   if (NET.role === 'guest') { NET.readyL = !NET.readyL; updateLobbyText(); renderRoom(); return; }
   if (settings.queue === 'train' && roomSize() === 1) { enterGame(); return; }
   if (roomSize() > 1) { startRoomMatch(); return; }
-  openRoom(true); netStatus(settings.queue === 'ranked' ? 'Ranked se joacă doar cu oameni. Invită cel puțin un prieten.' : 'Invită cel puțin un prieten ca să pornești un meci custom.');
+  openRoom(true); netStatus(settings.queue === 'ranked' ? 'Competitivul se joacă cu cel puțin un prieten în cameră. Invită-l cu codul lui.' : 'Invită cel puțin un prieten ca să pornești un meci custom.');
 }
 function togglePause(force) {
   if (game.state === 'menu' || game.state === 'over') return;
-  const want = force !== undefined ? force : el.pause.hidden;
+  const want = force !== undefined ? force : el.pause.hidden || el.pause.classList.contains('pg-out');
   if (!NET.mode) game.paused = want;
-  el.pause.hidden = !want;
-  if (want) clearInputs();
+  if (want) { renderPauseBoard(); openPanel('pause'); clearInputs(); }
+  else { $('#setPage').hidden = true; $('#xhEd').hidden = true; closePage('pause'); }
+}
+/* the scoreboard in the pause page: teams in a bomb match, a single ranking in deathmatch */
+function scoreRows(list) {
+  return list.map((c, i) => '<tr class="' + (c === player ? 'me' : '') + '"><td>' + (game.dm ? '<b class="pl">' + (i + 1) + '</b>' : '<span class="tdot" style="background:' + teamCss(c.team) + '"></span>') + (c === player ? 'Tu' : c.name) + '</td><td><img alt="" src="portrait_' + c.agentId + '.png">' + c.ag.name + '</td><td class="n">' + c.kills + '</td><td class="n">' + c.deaths + '</td><td class="n">' + Math.round(c.dmgDealt) + '</td></tr>').join('');
+}
+function renderPauseBoard() {
+  const head = '<tr><th>Jucător</th><th>Campion</th><th class="n">Ucideri</th><th class="n">Morți</th><th class="n">Daune</th></tr>';
+  const by = (a, b) => b.kills - a.kills || a.deaths - b.deaths;
+  let h;
+  if (game.dm) { h = scoreRows(chars.filter((c) => !c.gone).sort(by)); setText($('#pzBoardT'), 'Deathmatch · primul la ' + DM_GOAL + ' ucideri'); }
+  else { h = scoreRows(chars.filter((c) => c.team === 'atk' && !c.gone).sort(by)) + scoreRows(chars.filter((c) => c.team === 'def' && !c.gone).sort(by)); setText($('#pzBoardT'), 'Atac ' + game.sAtk + ' : ' + game.sDef + ' Apărare · runda ' + game.round); }
+  $('#pzBoard').innerHTML = '<table class="stats">' + head + h + '</table>';
+  setText($('#pauseSub'), (game.dm ? 'DEATHMATCH' : 'BOMBĂ ' + Math.max(1, chars.filter((c) => c.team === 'atk').length) + 'v' + Math.max(1, chars.filter((c) => c.team === 'def').length)) + ' · ' + (MAPDEFS[settings.map] || MAPDEFS.bazar).name.toUpperCase() + (NET.mode ? ' · MECIUL CONTINUĂ' : ''));
 }
 function toMenu() {
   netLeaveMatch();
   if (player) { player.scopeLvl = 0; player.scoped = false; }
   try { if (document.pointerLockElement) document.exitPointerLock(); } catch (e) { /* ignore */ }
   if (game.rankedSaved) { Object.assign(settings, game.rankedSaved); game.rankedSaved = null; }
-  game.ranked = false; game.train = false; game.forfeit = 0;
+  game.ranked = false; game.train = false; game.forfeit = 0; game.dm = false; DMP.open = false;
   const RR = game.lastRank; game.lastRank = null;
   if (RR && RR.up) { setTimeout(() => { lobbyConfetti(110); lobbyToast('Ai urcat în ' + RR.ra.name + '!'); }, 350); }
   game.state = 'menu'; game.paused = false; game.trial = null; updateLobbyText();
@@ -8330,13 +8990,17 @@ function showEnd(win) {
   const room = NET.role !== 'solo' || NET.mode === 'host';
   $('#againBtn').textContent = room ? (NET.role === 'leader' && NET.guests.size ? 'REVANȘĂ' : 'LA CAMERĂ') : 'REVANȘĂ';
   $('#againBtn').classList.toggle('ranked', !!game.ranked);
-  closeBuy(); el.hud.hidden = true; el.controls.hidden = true; el.end.hidden = false;
-  const t = $('#endTitle'); t.textContent = win ? 'VICTORIE!' : 'ÎNFRÂNGERE'; t.className = 'bigt ' + (win ? 'win' : 'lose');
-  $('#endScore').innerHTML = '<span class="a">ATAC ' + game.sAtk + '</span> : <span class="d">' + game.sDef + ' APĂRARE</span>';
-  const rows = chars.slice().sort((a, b) => b.kills - a.kills || a.deaths - b.deaths);
+  closeBuy(); el.hud.hidden = true; el.controls.hidden = true; el.pause.hidden = true; $('#setPage').hidden = true; $('#xhEd').hidden = true;
+  el.end.classList.toggle('win', !!win); el.end.classList.toggle('lose', !win); openPanel('end');
+  const t = $('#endTitle'), DR = game.dm ? dmRank() : null, place = DR ? DR.indexOf(player) + 1 : 0;
+  game.dmPlace = place;
+  t.textContent = game.dm ? (place === 1 ? 'LOCUL 1!' : 'LOCUL ' + place) : win ? 'VICTORIE!' : 'ÎNFRÂNGERE'; t.className = 'bigt ' + (win ? 'win' : 'lose');
+  $('#endScore').innerHTML = game.dm ? '<span class="d">DEATHMATCH</span> · ' + player.kills + (player.kills === 1 ? ' ucidere' : ' ucideri') + (place > 1 && DR[0] ? ' · a câștigat ' + frEsc(DR[0].name) + ' cu ' + DR[0].kills : '')
+    : '<span class="a">ATAC ' + game.sAtk + '</span> : <span class="d">' + game.sDef + ' APĂRARE</span>';
+  const rows = DR || chars.slice().sort((a, b) => b.kills - a.kills || a.deaths - b.deaths);
   const star = rows.slice().sort((a, b) => (b.kills * 100 + b.dmgDealt + (b.mvps || 0) * 50) - (a.kills * 100 + a.dmgDealt + (a.mvps || 0) * 50))[0];
   $('#endTable').innerHTML = '<tr><th>Jucător</th><th>Campion</th><th class="n">Ucideri</th><th class="n">Morți</th><th class="n">Daune</th></tr>' +
-    rows.map((c) => '<tr class="' + (c === player ? 'me' : '') + '"><td><span class="tdot" style="background:var(--' + c.team + ')"></span>' + (c === player ? 'Tu' : c.name) + (c === star ? '<span class="mvpb">MVP</span>' : '') + '</td><td><img alt="" src="portrait_' + c.agentId + '.png">' + c.ag.name + '</td><td class="n">' + c.kills + '</td><td class="n">' + c.deaths + '</td><td class="n">' + Math.round(c.dmgDealt) + '</td></tr>').join('');
+    rows.map((c, i) => '<tr class="' + (c === player ? 'me' : '') + '"><td>' + (game.dm ? '<b class="pl">' + (i + 1) + '</b>' : '<span class="tdot" style="background:' + teamCss(c.team) + '"></span>') + (c === player ? 'Tu' : c.name) + (c === star ? '<span class="mvpb">MVP</span>' : '') + '</td><td><img alt="" src="portrait_' + c.agentId + '.png">' + c.ag.name + '</td><td class="n">' + c.kills + '</td><td class="n">' + c.deaths + '</td><td class="n">' + Math.round(c.dmgDealt) + '</td></tr>').join('');
   const rbox = $('#endRank'); rbox.hidden = true;
   if (game.ranked && !game.trial) { const RR = rankedResult(win, star === player); game.lastRank = RR; renderRankResult(RR); }
   const R = matchRewards(win, !!game.train), rw = $('#endRewards');
@@ -8348,19 +9012,21 @@ function showEnd(win) {
 }
 function wireButtons() {
   $('#playBtn').addEventListener('click', playPressed);
-  $('#rkPlay').addEventListener('click', () => { $('#rankPanel').hidden = true; if (NET.role !== 'guest') { settings.queue = 'ranked'; saveSettings(); } updateLobbyText(); playPressed(); });
-  $('#queueSw').addEventListener('click', (e) => { const b = e.target.closest('button[data-v]'); if (!b || b.disabled || settings.queue === b.dataset.v || NET.role === 'guest') return; settings.queue = b.dataset.v; saveSettings(); Snd.init(); Snd.ui(); updateLobbyText(); renderRoom(); });
+  $('#rkPlay').addEventListener('click', () => { $('#rankPanel').hidden = true; $('#modeSel').hidden = true; if (NET.role !== 'guest') { settings.queue = 'ranked'; saveSettings(); } updateLobbyText(); playPressed(); });
+  $('#queueSw').addEventListener('click', (e) => { const b = e.target.closest('button[data-v]'); if (!b || b.disabled) return; setQueue(b.dataset.v); });
   $('.lb-me').addEventListener('click', () => openRoom());
   $('#lbSlots').addEventListener('click', (e) => { if (e.target.closest('.lbs-add')) { Snd.init(); Snd.ui(); openRoom(true); } });
   $('#shopBtn').addEventListener('click', () => { renderShop(); openPanel('shop'); });
   $('#champsBtn').addEventListener('click', () => { selChamp = settings.agent; renderChamps(); openPanel('champs'); });
-  $('#modeBtn').addEventListener('click', () => { if (settings.queue === 'ranked') { renderRankPanel(); openPanel('rankPanel'); } else { openPanel('modeSel'); renderXhEd(); } });
-  for (const b of document.querySelectorAll('.closeBtn')) b.addEventListener('click', () => { $('#' + b.dataset.close).hidden = true; Snd.ui(); updateLobbyText(); });
+  $('#modeBtn').addEventListener('click', () => { refreshMenu(); openPanel('modeSel'); });
+  $('#setBtn').addEventListener('click', () => { refreshMenu(); renderXhEd(); renderHudMini(); openPanel('setPage'); });
+  $('#setPause').addEventListener('click', () => { refreshMenu(); renderXhEd(); renderHudMini(); openPanel('setPage'); });
+  $('#pauseBack').addEventListener('click', () => togglePause(false));
+  for (const b of document.querySelectorAll('.closeBtn')) b.addEventListener('click', () => { closePage(b.dataset.close); Snd.ui(); updateLobbyText(); });
   $('#pauseBtn').addEventListener('click', () => togglePause(true));
   $('#resumeBtn').addEventListener('click', () => togglePause(false));
   $('#friendsBtn').addEventListener('click', () => openRoom());
   $('#quitBtn').addEventListener('click', toMenu);
-  $('#soundBtn').addEventListener('click', (e) => { Snd.init(); Snd.setOn(!Snd.on); e.currentTarget.textContent = 'Sunet: ' + (Snd.on ? 'pornit' : 'oprit'); });
   $('#buyBtn').addEventListener('click', openBuy);
   $('#buyClose').addEventListener('click', closeBuy);
   $('#readyBtn').addEventListener('click', readyUp);
@@ -8399,7 +9065,7 @@ let PANELS = null;
 /* frame budget: 60 fps in a match, 30 in the lobby on phones (and in eco), 15 behind an open menu panel */
 function frameBudget() {
   if (game.state === 'menu') {
-    if (!PANELS) PANELS = ['shop', 'friends', 'champs', 'modeSel', 'rankPanel', 'xhEd'].map((id) => document.getElementById(id)).filter(Boolean);
+    if (!PANELS) PANELS = ['shop', 'friends', 'champs', 'modeSel', 'rankPanel', 'xhEd', 'setPage'].map((id) => document.getElementById(id)).filter(Boolean);
     if (PANELS.some((p) => !p.hidden)) return 64;
     if (isPhone()) return 32;
   }
@@ -8424,7 +9090,8 @@ function frame(now) {
     while (acc >= STEP && n < 8 * fastForward) { simStep(STEP); acc -= STEP; n++; }
     if (acc > STEP * 4) acc = 0;
   }
-  if (game.state === 'menu') { renderLobby(dt); drawOverlay(0); updateHUD(); return; }
+  if (game.state === 'menu') { if (!pageCovers()) renderLobby(dt); drawOverlay(0); updateHUD(); return; }
+  if (pageCovers()) { updateHUD(); return; } // a page covers the match: it keeps running, nothing is drawn
   const rdt = running ? dt : 0;
   if (running) updateMouseWorld();
   updateCamera(dt);
@@ -8438,6 +9105,7 @@ function frame(now) {
 function boot(data) {
   loadSettings(); loadProfile();
   if (data && data.settings) { for (const k in settings) if (data.settings[k] !== undefined) settings[k] = data.settings[k]; loadSettingsGuard(); }
+  Snd.on = !!settings.snd; applySens();
   buildMenu(); buildBuyUI(); wireButtons(); wireRoom(); wireXhEd(); renderXhEd(); wireHudEd(); pnStart();
   touchMode = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
   $('#helpKeys').hidden = touchMode; $('#helpTouch').hidden = !touchMode && !(navigator.maxTouchPoints > 0);
@@ -8445,10 +9113,10 @@ function boot(data) {
   requestAnimationFrame((t) => { lastT = t; frame(t); });
   const pb = $('#playBtn'); pb.disabled = true; $('#loadInfo').hidden = true;
   const bootEl = $('#boot'), t0 = performance.now();
-  const TIPS = ['Ochește capul: un glonț în cap face daune de 2,5 ori mai mari.', 'Butoanele de pe ecran le muți și le mărești din Pauză → HUD, cu până la 3 sloturi salvate.',
+  const TIPS = ['Ochește capul: un glonț în cap face daune de peste două ori mai mari.', 'Butoanele de pe ecran le muți și le mărești din Setări → HUD, cu până la 3 sloturi salvate.', 'În Deathmatch fiecare e pentru el: primul la ' + DM_GOAL + ' de ucideri câștigă.', 'Din Setări poți lărgi câmpul vizual: vezi mai mult teren, iar arma stă mai jos.',
     'Tufișurile te ascund: inamicii te văd doar de foarte aproape.', 'Atacatorii plantează bomba, apărătorii o dezamorsează.',
-    'Banii rămân de la o rundă la alta, așa că alege cu grijă ce cumperi.', 'Fumigena blochează vederea: folosește-o când treci prin zone deschise.', 'Campionii noi se deblochează din Magazin cu monede.', 'Ranked și meciurile custom se joacă doar cu oameni: invită-ți prietenii în cameră.',
-    'Apasă + lângă campionul tău ca să inviți un prieten. Cine intră apare lângă tine.', 'Ținta se personalizează din MOD DE JOC → Țintă.', 'Cu AWP-ul în mână apasă LUNETĂ: o dată zoom ×2, a doua oară ×5.', 'Bomba C4 are skinuri în Magazin, la Bombă C4.', 'Sari pe lăzi și butoaie ca să vezi peste ele: de pe o ladă mică urci și pe teancuri.', 'În Arsenal, o atingere pe armă îți arată detaliile, a doua o cumpără.', 'Din săritură tragi mai imprecis: aterizează, apoi trage.'];
+    'Banii rămân de la o rundă la alta, așa că alege cu grijă ce cumperi.', 'Fumigena blochează vederea: folosește-o când treci prin zone deschise.', 'Campionii noi se deblochează din Magazin cu monede.', 'Competitivul și meciurile custom se joacă cu prietenii din cameră; locurile libere se umplu cu boți.',
+    'Apasă + lângă campionul tău ca să inviți un prieten. Cine intră apare lângă tine.', 'Ținta se personalizează din Setări (rotița din lobby) → Țintă.', 'Cu AWP-ul în mână apasă LUNETĂ: o dată zoom ×2, a doua oară ×5.', 'Bomba C4 are skinuri în Magazin, la Bombă C4.', 'Sari pe lăzi și butoaie ca să vezi peste ele: de pe o ladă mică urci și pe teancuri.', 'În Arsenal, o atingere pe armă îți arată detaliile, a doua o cumpără.', 'Din săritură tragi mai imprecis: aterizează, apoi trage.'];
   let tipK = Math.floor(Math.random() * TIPS.length);
   const tipNext = () => { setText($('#btTip'), TIPS[tipK % TIPS.length]); tipK++; };
   tipNext(); const tipTimer = setInterval(tipNext, 2600);
@@ -8463,7 +9131,7 @@ function boot(data) {
   });
 }
 function loadSettingsGuard() { if (!AGENTS[settings.agent]) settings.agent = DEFAULT_AGENT; if (settings.mode !== 3 && settings.mode !== 5) settings.mode = 5; if (!DIFFS[settings.diff]) settings.diff = 'normal'; if (settings.team !== 'atk' && settings.team !== 'def') settings.team = 'atk'; }
-window.__bs = { ARM_RIG, ARM_POSE, armPose, HUDED, openHudEd, closeHudEd, hudTemplate, applyHud, hudCfg, pixTex, VM, VM_GUN, ELBOW, reloadPose, fireAs: (c, a) => tryFire(c, a), tryJump, supportH, standAt, vertTick, standH, MAPC, WEAPONS, NET, PN, RL, buildKnifeModel, toggleKnife, swapWeapon, netJoinCode, inviteFriend, answerInvite, netHostStart, startRoomMatch, openRoom, profile_: () => profile, myCard, setMemberTeam, leaveRoom, lobby, scopeCycle, topAt, shotSpread, drawXh, xhCfg, renderShop, bombDef, myBombKey, game, chars, bomb, settings, simStep, startMatch, enterGame, findPath, get player() { return player; }, get touchMode() { return touchMode; }, setFF(v) { fastForward = v; }, botify() { if (player) player.ai = makeAI(); }, MW, MH, grid, siteTiles, cam, camera, scene, renderer, ASSETS, buildWorld, world, useSuper, turrets, profile, NET, AGENTS, buildCharMesh, disposeCharMesh, input, startAttack, autoTarget, endMatch, rankOf, lobbyConfetti, view, vm, charHeight, updateCamera, mouse, get MAP() { return MAP; } };
+window.__bs = { ARM_RIG, ARM_POSE, armPose, HUDED, openHudEd, closeHudEd, hudTemplate, applyHud, hudCfg, pixTex, VM, VM_GUN, ELBOW, reloadPose, fireAs: (c, a) => tryFire(c, a), tryJump, supportH, standAt, vertTick, standH, MAPC, WEAPONS, NET, PN, RL, buildKnifeModel, toggleKnife, swapWeapon, netJoinCode, inviteFriend, answerInvite, netHostStart, startRoomMatch, openRoom, profile_: () => profile, myCard, setMemberTeam, leaveRoom, lobby, scopeCycle, topAt, shotSpread, drawXh, xhCfg, renderShop, bombDef, myBombKey, game, chars, bomb, settings, simStep, startMatch, enterGame, findPath, get player() { return player; }, get touchMode() { return touchMode; }, setFF(v) { fastForward = v; }, botify() { if (player) player.ai = makeAI(); }, MW, MH, grid, siteTiles, cam, camera, scene, renderer, ASSETS, buildWorld, world, useSuper, turrets, profile, NET, AGENTS, buildCharMesh, disposeCharMesh, input, startAttack, autoTarget, endMatch, rankOf, lobbyConfetti, view, vm, charHeight, updateCamera, mouse, get MAP() { return MAP; }, dmRank, DM_SPAWNS, dmChoose, DMP, openPanel, closePage, togglePause, renderModePage, showEnd, updateLobbyText, refreshMenu, setQueue };
 const hot = window.claude && window.claude.hot;
 try { if (hot && hot.snapshot) hot.snapshot(() => ({ settings: Object.assign({}, settings) })); } catch (e) { /* no hot reload */ }
 if (hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});
