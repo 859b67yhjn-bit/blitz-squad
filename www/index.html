@@ -143,8 +143,8 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 #knifeBtn.on{background:radial-gradient(circle at 50% 32%,#ffe27a,#f2a10c 70%)}
 #jumpBtn{width:calc(var(--fs)*.54);height:calc(var(--fs)*.54);right:calc(max(16px, env(safe-area-inset-right, 0px)) + 1vmin + var(--fs)*.56);bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs) + 13vmin)}
 #jumpBtn.on{filter:brightness(1.25);transform:scale(.94)}
-#actBtn{position:absolute;pointer-events:auto;touch-action:none;right:calc(max(16px, env(safe-area-inset-right, 0px)) + var(--fs)*1.75 + 10vmin);
-  bottom:calc(env(safe-area-inset-bottom,0px) + 5vmin);font-family:var(--f-display);font-size:14px;padding:14px 18px;border-radius:16px;
+#actBtn{position:absolute;pointer-events:auto;touch-action:none;left:47%;translate:-50% 0;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 90px);font-family:var(--f-display);font-size:14px;padding:14px 18px;border-radius:16px;
   border:3px solid var(--outline);color:#fff;background:linear-gradient(90deg,rgba(255,255,255,.35) calc(var(--p,0)*100%),transparent 0),linear-gradient(180deg,#ff5d6c,#c3192c);
   box-shadow:0 5px 0 rgba(0,0,0,.35);animation:pulse 1.2s ease-in-out infinite}
 #actBtn.def{background:linear-gradient(90deg,rgba(255,255,255,.35) calc(var(--p,0)*100%),transparent 0),linear-gradient(180deg,#5aa2ff,#1b56c4)}
@@ -263,6 +263,38 @@ h2{margin:0 0 6px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;c
   .bm-top{flex-wrap:wrap;row-gap:2px}.bm-time{order:9;flex-basis:100%}
   .bm-acts{gap:6px}.bm-acts .chunky{padding:6px 10px;font-size:12px;min-height:36px}#buyClose{width:38px}
 }
+/* ---------- HUD editor ---------- */
+#hudEdBg{position:absolute;inset:0;z-index:2;pointer-events:none;display:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 44px),repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 1px,transparent 1px 44px),rgba(8,12,22,.42)}
+.hud-edit #hudEdBg{display:block}
+.hud-edit #controls[hidden],.hud-edit #hud[hidden]{display:block!important}
+.hud-edit #controls [data-hk][hidden],.hud-edit #controls #scopeBtn[hidden]{display:grid!important}
+.hud-edit #moveBase{opacity:1}
+.hud-edit [data-hk]{outline:2px dashed rgba(255,255,255,.65);outline-offset:4px}
+.hud-edit .he-on{outline:3px solid var(--gold)!important;outline-offset:4px}
+.hud-edit #lookZone,.hud-edit #moveZone{pointer-events:none}
+#hudEd{position:absolute;inset:0;z-index:20;pointer-events:none}
+.he-catch{position:absolute;inset:0;pointer-events:auto;touch-action:none}
+.he-bar,.he-sel{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;pointer-events:auto;padding:5px 8px;border-radius:16px;
+  border:3px solid var(--outline);background:linear-gradient(180deg,rgba(40,52,88,.97),rgba(16,22,40,.97));box-shadow:0 4px 0 rgba(0,0,0,.35);max-width:calc(100vw - 24px)}
+.he-bar{top:calc(env(safe-area-inset-top,0px) + 6px);flex-wrap:wrap;justify-content:center}
+.he-t{font-family:var(--f-display);font-weight:400;font-size:15px;text-shadow:var(--ts-s);padding:0 2px}
+.he-slots,.he-tpl{display:flex;gap:4px;align-items:center}
+.he-slots button,.he-tpl button{border:2px solid var(--outline);border-radius:10px;background:#222a40;padding:5px 9px;font-family:var(--f-display);font-size:11px;box-shadow:0 2px 0 rgba(0,0,0,.35);min-height:32px}
+.he-slots button.on{background:var(--gold);color:#2a1a00}
+.he-tpl span{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+#heDone{background:var(--good);color:#06240f;padding:6px 14px;font-size:14px;min-height:34px}
+.he-sel{top:calc(env(safe-area-inset-top,0px) + 58px);flex-wrap:wrap;justify-content:center}
+.he-sel b{font-family:var(--f-display);font-weight:400;font-size:13px;text-shadow:var(--ts-s);white-space:nowrap}
+.he-sel label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--muted)}
+.he-sel input[type=range]{width:min(120px,22vw);accent-color:var(--gold)}
+.he-sel em{font-style:normal;font-family:var(--f-display);font-size:11px;color:var(--paper);min-width:34px}
+#heResetOne{padding:5px 10px;font-size:11px;min-height:32px}
+.he-hint{position:absolute;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 60px);margin:0;padding:6px 12px;border-radius:12px;background:rgba(10,14,26,.82);
+  font-size:11.5px;font-weight:700;color:var(--paper);text-align:center;max-width:min(560px,calc(100vw - 24px));pointer-events:none}
+.hud-mini{display:flex;flex-direction:column;gap:8px}
+.hud-mini .seg button small{display:block;font-family:var(--f-body);font-size:10px;font-weight:700;color:var(--muted)}
+.hud-mini .seg button.on small{color:#4a3000}
+@media (orientation:portrait){.he-sel{top:calc(env(safe-area-inset-top,0px) + 96px)}.he-hint{top:calc(env(safe-area-inset-top,0px) + 96px)}}
 #readyBtn{background:var(--good);color:#06240f}
 #autoBuy{background:var(--gold);color:#2a1a00}
 
@@ -374,7 +406,7 @@ table.stats td.n{text-align:right} table.stats th.n{text-align:right}
 @media (orientation:portrait){
   #vitals{bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs)*1.75 + 12vmin)}
   #hint{bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs)*1.75 + 22vmin)}
-  #actBtn{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs)*1.75 + 30vmin)}
+  #actBtn{left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + var(--fs)*1.75 + 30vmin)}
   #moveZone{width:50%;top:35%}
   #buyBtn{top:calc(env(safe-area-inset-top,0px) + 74px)}
 }
@@ -694,7 +726,7 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
 .xh.st-dot i{display:none}
 .xh.st-circle i{display:none} .xh.st-circle u{display:block}
 .xh.on{--col:#ff4a3a}
-#scopeOv{position:absolute;inset:0;pointer-events:none;z-index:0;display:none;--r:min(46vmin,46vh);background:radial-gradient(circle at 50% 50%,transparent 0,transparent calc(var(--r) - 1px),#05060a calc(var(--r) + 1px))}
+#scopeOv{position:absolute;inset:0;pointer-events:none;z-index:2;display:none;--r:min(46vmin,46vh);background:radial-gradient(circle at 50% 50%,transparent 0,transparent calc(var(--r) - 1px),#05060a calc(var(--r) + 1px))}
 #scopeOv.on{display:block}
 #scopeOv::before,#scopeOv::after{content:"";position:absolute;background:rgba(5,6,10,.9)}
 #scopeOv::before{left:calc(50% - var(--r));right:calc(50% - var(--r));top:50%;height:2px;margin-top:-1px}
@@ -857,6 +889,8 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
   </div>
   <canvas id="gl" aria-label="Arena de joc"></canvas>
   <canvas id="ov"></canvas>
+  <div id="scopeOv"><i></i><b></b></div>
+  <div id="hudEdBg"></div>
 
   <div id="controls" hidden>
     <div id="moveZone"><div id="moveBase"><div id="moveKnob"></div></div></div>
@@ -873,7 +907,6 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
   </div>
 
   <div id="hud" hidden>
-    <div id="scopeOv"><i></i><b></b></div>
     <div id="xhair" class="xh" hidden><i></i><i></i><i></i><i></i><b></b><u></u></div>
     <div id="hitmk"></div>
     <div class="top">
@@ -1012,12 +1045,10 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
       <section class="ms-train"><h2>Meci</h2>
         <div class="seg" id="optMode"><button class="chunky" data-v="3">3 vs 3</button><button class="chunky" data-v="5">5 vs 5</button></div>
       </section>
-      <section><h2>Cameră</h2>
-        <div class="seg" id="optCam"><button class="chunky" data-v="tpp">Third person<small>din spatele umărului, ca în PUBG</small></button><button class="chunky" data-v="fpp">First person<small>din ochii campionului</small></button><button class="chunky" data-v="top">De sus<small>vederea clasică</small></button></div>
-      </section>
+      <section><h2>HUD</h2><div class="hud-mini"><div class="seg" id="hudSlotsMini"><button class="chunky" data-s="1">Slot 1<small>implicit</small></button><button class="chunky" data-s="2">Slot 2<small>implicit</small></button><button class="chunky" data-s="3">Slot 3<small>implicit</small></button></div><button class="chunky" id="hudOpen">Personalizează HUD</button></div></section>
       <section><h2>Țintă</h2><div class="xe-mini"><div class="box"><div class="xh" id="xhMini"><i></i><i></i><i></i><i></i><b></b><u></u></div></div><button class="chunky" id="xhOpen">Personalizează ținta</button></div></section>
       <section><h2>Ajutor la țintire</h2>
-        <div class="seg" id="optAssist"><button class="chunky" data-v="normal">Normal<small>linia se fixează pe inamicul spre care ochești</small></button><button class="chunky" data-v="low">Puțin<small>doar când linia atinge deja inamicul</small></button><button class="chunky" data-v="off">Deloc<small>glonțul merge exact pe linie</small></button></div>
+        <div class="seg" id="optAssist"><button class="chunky" data-v="normal">Normal<small>ținta încetinește când trece peste un inamic</small></button><button class="chunky" data-v="low">Puțin<small>încetinește doar un pic</small></button><button class="chunky" data-v="off">Deloc<small>ținta merge exact cât muți degetul</small></button></div>
       </section>
       <section><h2>Grafică</h2>
         <div class="seg" id="optGfx"><button class="chunky" data-v="auto">Automat</button><button class="chunky" data-v="high">Frumoasă</button><button class="chunky" data-v="balanced">Echilibrată</button><button class="chunky" data-v="eco">Economie<small>30 fps, fără umbre, telefonul stă rece</small></button></div>
@@ -1025,7 +1056,7 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
       <section class="ms-train"><h2>Boți (Antrenament)</h2>
         <div class="seg" id="optDiff"><button class="chunky" data-v="easy">Ușor</button><button class="chunky" data-v="normal">Normal</button><button class="chunky" data-v="hard">Greu</button></div>
       </section>
-      <p class="help" id="helpTouch"><b>Telefon, third/first person:</b> stânga te miști, iar în dreapta tragi cu degetul pe ecran ca să te uiți în jur. Butonul FOC trage (ține-l apăsat la armele automate) și poți ochi și în timp ce îl ții. Un glonț în cap face daune de 2,5 ori mai mari. Săgeata în sus te face să sari: poți urca pe lăzi, butoaie și saci. <b>Camera de sus:</b> stânga te miști (împins pe jumătate mergi încet, precis și fără zgomot). Butonul roșu: o atingere scurtă trage în cel mai apropiat inamic (cel cu cercul alb). Ca să ochești, tragi de el, linia se lipește de inamic și se face roșie, iar când ridici degetul tragi. Dacă duci degetul înapoi în mijloc, focul se anulează. Din fugă gloanțele se împrăștie puțin: pe loc ești mai precis.</p>
+      <p class="help" id="helpTouch"><b>Telefon:</b> jocul e la first person. Cu degetul în stânga te miști (împins doar pe jumătate mergi încet și fără zgomot), iar cu degetul în dreapta te uiți în jur. FOC trage: ține-l apăsat la armele automate, poți ochi și cât îl ții. Un glonț în cap face daune de 2,5 ori mai mari. Săgeata în sus te face să sari, așa că poți urca pe lăzi, butoaie și saci. Cu AWP-ul apasă LUNETĂ: o dată pentru zoom ×2, a doua oară pentru ×5. Butoanele le poți muta și mări din <b>Pauză → HUD</b>.</p>
       <p class="help" id="helpKeys"><b>Tastatură:</b> WASD mișcare, Shift mers încet, mouse ochire și foc, R reîncarcă, G grenadă, T schimbă grenada, Space sari, Q super, E plantează sau dezamorsează, B arsenal (cumperi arme), 1/2/3 arme și cuțit, Z lunetă.</p>
     </div>
   </div>
@@ -1050,11 +1081,28 @@ table.stats .mvpb{font-family:var(--f-display);font-size:9px;background:var(--go
     </div>
   </div>
 
+  <div id="hudEd" hidden>
+    <div class="he-catch" id="heCatch"></div>
+    <div class="he-bar">
+      <b class="he-t">HUD</b>
+      <div class="he-slots" id="heSlots"><button data-s="1">SLOT 1</button><button data-s="2">SLOT 2</button><button data-s="3">SLOT 3</button></div>
+      <div class="he-tpl" id="heTpl"><span>Șablon</span><button data-t="def">Implicit</button><button data-t="big">Mari</button><button data-t="small">Compacte</button></div>
+      <button id="heDone" class="chunky">GATA</button>
+    </div>
+    <div class="he-sel" id="heSel" hidden>
+      <b id="heName">Foc</b>
+      <label>Mărime<input type="range" id="heSize" min="60" max="180" step="5" value="100"><em id="heSizeV">100%</em></label>
+      <label>Vizibil<input type="range" id="heOp" min="25" max="100" step="5" value="100"><em id="heOpV">100%</em></label>
+      <button id="heResetOne" class="chunky">Resetează</button>
+    </div>
+    <p class="he-hint" id="heHint">Trage un buton ca să-l muți. Atinge-l ca să-i schimbi mărimea și vizibilitatea. Se salvează singur în slotul ales.</p>
+  </div>
+
   <div id="pause" class="screen" hidden>
     <div class="wrap panel">
       <div class="bigt">PAUZĂ</div>
       <button id="resumeBtn" class="play">CONTINUĂ</button>
-      <div class="btnrow"><button id="soundBtn" class="chunky">Sunet: pornit</button><button id="xhPause" class="chunky">Țintă</button><button id="quitBtn" class="chunky">Ieși la meniu</button></div>
+      <div class="btnrow"><button id="soundBtn" class="chunky">Sunet: pornit</button><button id="xhPause" class="chunky">Țintă</button><button id="hudPause" class="chunky">HUD</button><button id="quitBtn" class="chunky">Ieși la meniu</button></div>
     </div>
   </div>
 
@@ -1175,47 +1223,49 @@ const MAPDEFS = {
   bazar: {
     name: 'Bazarul', sub: 'Străduțe strâmte, pentru first person', theme: 'desert', tall: true,
     build() {
+      // wider streets (4-6 tiles) so a squad can pass each other; corners and offsets still break the long sightlines
       // defenders' spawn; CT corridors leave from its top corners and turn down into the sites
       mR(20, 1, 31, 5, '.'); mR(22, 2, 29, 4, 'D');
-      mR(16, 1, 19, 3, '.'); mR(16, 4, 18, 11, '.'); mR(32, 1, 35, 3, '.'); mR(33, 4, 35, 11, '.');
+      mR(16, 1, 19, 3, '.'); mR(16, 4, 19, 11, '.'); mR(32, 1, 35, 3, '.'); mR(32, 4, 35, 11, '.');
       // A site (left) and B site (right)
       mR(3, 3, 15, 14, '.'); mR(36, 3, 48, 14, '.');
       mR(5, 5, 11, 10, '1'); mR(40, 5, 46, 10, '2');
-      mR(15, 3, 15, 8, '#'); mR(36, 3, 36, 8, '#'); mR(13, 13, 14, 14, '#');
-      // CT mid: down from the spawn, right, down into the plaza
-      mR(24, 6, 27, 9, '.'); mR(24, 10, 31, 12, '.'); mR(29, 13, 31, 20, '.');
+      mR(15, 3, 15, 8, '#'); mR(36, 3, 36, 8, '#');
+      // CT mid: down from the spawn, a room, then down into the plaza
+      mR(21, 6, 25, 9, '.'); mR(21, 10, 30, 12, '.'); mR(27, 13, 30, 20, '.');
       // the plaza in the middle, with a statue block in the centre
       mR(20, 21, 31, 30, '.'); mR(24, 24, 27, 27, '#'); mR(20, 28, 21, 29, '#');
       // lower mid: from the attackers' spawn up, left, up into the plaza
-      mR(24, 44, 27, 49, '.'); mR(19, 41, 27, 43, '.'); mR(19, 31, 22, 40, '.'); mR(22, 39, 22, 41, '#');
+      mR(23, 44, 28, 49, '.'); mR(19, 41, 28, 43, '.'); mR(18, 31, 22, 40, '.');
       // A short: from the plaza up the left, then into the corner of A
-      mR(16, 22, 19, 26, '.'); mR(16, 15, 19, 21, '.'); mR(13, 15, 15, 16, '.'); mR(18, 19, 19, 20, '#');
-      // A long: outside, the doors, the long room in two offset halves, a stepped corridor up into A
-      mR(3, 44, 17, 49, '.'); mR(16, 46, 16, 47, '#'); mR(4, 41, 6, 43, '.'); mR(3, 35, 8, 40, '.'); mR(3, 29, 11, 34, '.'); mR(6, 38, 7, 38, '#');
-      mR(9, 21, 12, 28, '.'); mR(5, 15, 7, 21, '.'); mR(8, 21, 8, 21, '.'); mR(5, 14, 7, 14, '.');
-      // B tunnels: outside, up, a turn, up again, then the entrance room through a door into B
-      mR(34, 44, 48, 49, '.'); mR(35, 46, 35, 47, '#'); mR(44, 37, 47, 43, '.'); mR(38, 33, 47, 36, '.'); mR(38, 22, 41, 32, '.'); mR(42, 18, 47, 24, '.'); mR(43, 15, 46, 17, '.');
-      mR(42, 19, 43, 20, '#');
+      mR(15, 17, 19, 26, '.'); mR(16, 22, 19, 26, '.'); mR(13, 13, 19, 16, '.');
+      // A long: outside, the door, the long room in two offset halves, a corridor up into A
+      mR(3, 44, 17, 49, '.'); mR(16, 46, 16, 47, '#'); mR(3, 41, 7, 43, '.'); mR(3, 35, 8, 40, '.'); mR(3, 29, 11, 34, '.');
+      mR(9, 18, 13, 28, '.'); mR(3, 14, 7, 21, '.'); mR(3, 18, 13, 21, '.');
+      // B tunnels: outside, up, a turn, up again, then the entrance room into B
+      mR(34, 44, 48, 49, '.'); mR(35, 46, 35, 47, '#'); mR(43, 37, 47, 43, '.'); mR(38, 33, 47, 36, '.'); mR(37, 20, 41, 32, '.'); mR(42, 18, 47, 24, '.'); mR(42, 15, 47, 17, '.');
       // mid to B: a connector lower than A short, into the tunnels
-      mR(32, 27, 37, 30, '.');
-      // attackers' spawn: a courtyard at the bottom, left / right exits go up into the outside areas
-      mR(18, 50, 33, 57, '.'); mR(18, 46, 20, 49, '.'); mR(31, 46, 33, 49, '.'); mR(20, 54, 31, 56, 'T');
-      mR(21, 50, 22, 51, '#'); mR(29, 50, 30, 51, '#');
+      mR(32, 26, 37, 30, '.');
+      // attackers' spawn: a courtyard at the bottom with wide exits up into the outside areas
+      mR(18, 50, 33, 57, '.'); mR(17, 46, 21, 49, '.'); mR(30, 46, 34, 49, '.'); mR(20, 54, 31, 56, 'T');
       // cover and dressing: crates and sandbags on the sites, market stalls outside, barrels, pots, palms, bushes
       mP(8, 7, 'C'); mP(9, 7, 'c'); mP(12, 9, 'c'); mP(4, 12, 'o'); mR(5, 12, 6, 12, 'k'); mP(14, 4, 'p'); mP(3, 3, 'P');
       mP(43, 7, 'C'); mP(42, 7, 'c'); mP(39, 9, 'c'); mP(47, 12, 'o'); mR(45, 12, 46, 12, 'k'); mP(37, 4, 'p'); mP(48, 3, 'P');
-      mP(21, 22, 'c'); mP(30, 29, 'c'); mP(31, 22, 'o'); mP(31, 30, 'P'); mR(28, 21, 28, 22, 'w');
+      mP(21, 22, 'c'); mP(30, 29, 'c'); mP(31, 22, 'o'); mP(31, 30, 'P');
       mP(20, 1, 'o'); mP(31, 1, 'o'); mP(21, 5, 'p'); mP(30, 5, 'p');
       mP(18, 57, 'c'); mP(33, 57, 'c'); mP(19, 52, 'o'); mP(32, 52, 'o');
       mR(8, 49, 10, 49, 's'); mP(3, 44, 'o'); mP(12, 44, 'c'); mR(41, 49, 43, 49, 's'); mP(48, 44, 'o'); mP(37, 44, 'c');
       mP(3, 29, 'c'); mP(10, 33, 'C'); mP(3, 35, 'o'); mP(47, 33, 'c'); mP(38, 36, 'o'); mP(47, 18, 'c'); mP(37, 30, 'c');
-      mR(20, 42, 21, 43, 'g'); mR(30, 13, 31, 14, 'g'); mR(46, 46, 47, 47, 'g'); mR(4, 45, 5, 46, 'g');
+      mP(8, 38, 'c'); mP(37, 24, 'c'); mP(41, 24, 'C');
+      // pillars that break the long diagonals without narrowing any street below four tiles
+      mR(13, 15, 13, 16, '#'); mR(19, 19, 19, 20, '#'); mR(42, 19, 43, 20, '#'); mR(22, 38, 22, 40, '#'); mR(20, 25, 20, 26, '#');
+      mR(20, 42, 21, 43, 'g'); mR(29, 13, 30, 14, 'g'); mR(46, 46, 47, 47, 'g'); mR(4, 45, 5, 46, 'g');
     },
     floor(i, j) {
       if (i >= 3 && i <= 15 && j >= 3 && j <= 14) return 2;
       if (i >= 36 && i <= 48 && j >= 3 && j <= 14) return 3;
       if (i >= 38 && i <= 47 && j >= 15 && j <= 43) return 4;
-      if ((i >= 20 && i <= 37 && j >= 21 && j <= 30) || (i >= 24 && i <= 31 && j >= 6 && j <= 20) || (i >= 19 && i <= 27 && j >= 31 && j <= 49)) return 1;
+      if ((i >= 20 && i <= 37 && j >= 21 && j <= 30) || (i >= 21 && i <= 31 && j >= 6 && j <= 20) || (i >= 18 && i <= 28 && j >= 31 && j <= 49)) return 1;
       return 0;
     },
     ctGap: [[16, 10], [36, 10]],
@@ -3399,7 +3449,7 @@ function lobbySlotsUI() {
 
 
 /* ================= game state ================= */
-const settings = { team: 'atk', agent: 'bolt', mode: 5, diff: 'normal', map: 'bazar', mapV: 2, autoFire: false, fireV: 2, gfx: 'auto', assist: 'normal', aimV: 2, queue: 'train', cam: 'tpp', camV: 1, xh: null };
+const settings = { team: 'atk', agent: 'bolt', mode: 5, diff: 'normal', map: 'bazar', mapV: 2, autoFire: false, fireV: 2, gfx: 'auto', assist: 'normal', aimV: 2, queue: 'train', cam: 'fpp', camV: 2, xh: null, hud: null };
 let DIFF = DIFFS.normal;
 const game = { state: 'menu', paused: false, time: 0, round: 0, sAtk: 0, sDef: 0, timer: ROUND_TIME, freezeT: 0, postT: 0,
   loss: { atk: 0, def: 0 }, planted: false, atkSite: 1, intel: { atk: null, def: null }, specId: -1, lastWinner: null };
@@ -3915,8 +3965,20 @@ function separate() {
     const a = chars[i]; if (!a.alive || a.leapT > 0) continue;
     for (let j = i + 1; j < chars.length; j++) {
       const b = chars[j]; if (!b.alive || b.leapT > 0 || Math.abs((a.jumpY || 0) - (b.jumpY || 0)) > 0.9) continue;
-      const dx = b.x - a.x, dz = b.z - a.z, dd = dx * dx + dz * dz, R = a.r + b.r - 0.1;
-      if (dd < R * R && dd > 1e-6) { const d = Math.sqrt(dd), p = (R - d) * 0.5, ux = dx / d, uz = dz / d; a.x -= ux * p; a.z -= uz * p; b.x += ux * p; b.z += uz * p; }
+      // teammates squeeze past each other, and a bot always steps out of a human teammate's way (it never body-blocks you)
+      const mates = a.team === b.team, dx = b.x - a.x, dz = b.z - a.z, dd = dx * dx + dz * dz, R = a.r + b.r - (mates ? 0.28 : 0.1);
+      if (dd < R * R && dd > 1e-6) {
+        const d = Math.sqrt(dd), p = R - d, ux = dx / d, uz = dz / d;
+        const wa = mates && !a.ai && b.ai ? 0 : mates && a.ai && !b.ai ? 1 : 0.5;
+        a.x -= ux * p * wa; a.z -= uz * p * wa; b.x += ux * p * (1 - wa); b.z += uz * p * (1 - wa);
+        if (wa === 0 || wa === 1) { // the bot also slides sideways, off the human's path, instead of being shoved ahead of them
+          const h = wa === 0 ? a : b, bot = wa === 0 ? b : a, hv = Math.hypot(h.vx, h.vz);
+          if (hv > 0.3) {
+            const fx = h.vx / hv, fz = h.vz / hv, side = (bot.x - h.x) * -fz + (bot.z - h.z) * fx >= 0 ? 1 : -1;
+            const k = Math.min(0.06, p * 1.5); bot.x += -fz * side * k; bot.z += fx * side * k;
+          }
+        }
+      }
     }
   }
   for (const c of chars) if (c.alive && !(c.leapT > 0)) collideTiles(c);
@@ -4131,7 +4193,7 @@ function simStep(dt) {
   spotT -= dt; if (spotT <= 0) { spotT = 0.2; computeSpotted(); }
   if (player && !player.ai) updatePlayer(dt);
   if (NET.mode === 'host') for (const c of chars) if (c.remote && !c.ai) netRemoteControl(c, dt);
-  for (const c of chars) if (c.ai && c.alive) botAct(c, dt);
+  for (const c of chars) if (c.ai && c.alive && !c.ai.testFreeze) botAct(c, dt); // testFreeze: a test keeps a bot standing still
   for (const c of chars) updateChar(c, dt);
   separate();
   updateBomb(dt);
@@ -4777,7 +4839,7 @@ const view = { yaw: -Math.PI / 2, pitch: 0.1, sens: 0.0068 };
 const isPOV = () => settings.cam !== 'top' && game.state !== 'menu' && !!player;
 const isFPP = () => (settings.cam === 'fpp' || (player && player.scoped)) && isPOV() && player.alive;
 function lookBy(dx, dy) {
-  const f = settings.assist !== 'off' && player && player.aimLock ? 0.55 : 1; // the view slows down over an enemy (sticky aim)
+  const f = player && player.aimLock ? (settings.assist === 'normal' ? 0.55 : settings.assist === 'low' ? 0.8 : 1) : 1; // the view slows down over an enemy (sticky aim)
   const z = player && player.scoped ? camera.fov / 70 : 1; // through the scope the view turns slower, like the zoom
   view.yaw += dx * view.sens * f * z; view.pitch = clamp(view.pitch + dy * view.sens * 0.75 * f * z, -0.42, 0.62);
 }
@@ -4886,9 +4948,9 @@ const moveZone = $('#moveZone'), moveBase = $('#moveBase'), moveKnob = $('#moveK
 let moveId = null, mox = 0, moy = 0;
 const fsPx = () => clamp(Math.min(window.innerWidth, window.innerHeight) * 0.26, 84, 128);
 function restMove() {
-  const fs = fsPx();
-  moveBase.style.left = (Math.max(16, safe.l) + fs * 0.62 + 8) + 'px';
-  moveBase.style.top = (window.innerHeight - safe.b - fs * 0.62 - 14) + 'px';
+  const fs = fsPx(), o = hudItem('move'), s = o && o.s ? o.s : 1; // the HUD layout can move and resize the joystick
+  if (o && o.x !== undefined) { moveBase.style.left = (o.x * window.innerWidth).toFixed(1) + 'px'; moveBase.style.top = (o.y * window.innerHeight).toFixed(1) + 'px'; }
+  else { moveBase.style.left = (Math.max(16, safe.l) + fs * 0.62 * s + 8) + 'px'; moveBase.style.top = (window.innerHeight - safe.b - fs * 0.62 * s - 14) + 'px'; }
   moveKnob.style.transform = 'translate(-50%,-50%)'; moveBase.classList.remove('on');
 }
 moveZone.addEventListener('pointerdown', (e) => {
@@ -4902,10 +4964,10 @@ moveZone.addEventListener('pointerdown', (e) => {
 });
 moveZone.addEventListener('pointermove', (e) => {
   if (e.pointerId !== moveId) return;
-  const R = fsPx() * 0.52;
+  const hs = hudScale('move'), R = fsPx() * 0.52 * hs;
   let dx = e.clientX - mox, dy = e.clientY - moy, L = Math.hypot(dx, dy);
   if (L > R) { mox += (dx / L) * (L - R); moy += (dy / L) * (L - R); moveBase.style.left = mox + 'px'; moveBase.style.top = moy + 'px'; dx = e.clientX - mox; dy = e.clientY - moy; L = R; }
-  moveKnob.style.transform = 'translate(calc(-50% + ' + dx.toFixed(1) + 'px), calc(-50% + ' + dy.toFixed(1) + 'px))';
+  moveKnob.style.transform = 'translate(calc(-50% + ' + (dx / hs).toFixed(1) + 'px), calc(-50% + ' + (dy / hs).toFixed(1) + 'px))';
   if (L > 8) { input.mx = dx / L; input.mz = dy / L; input.mag = L / R; } else { input.mx = 0; input.mz = 0; input.mag = 0; }
   moveBase.classList.toggle('walk', L > 8 && L / R < 0.55);
 });
@@ -4939,6 +5001,8 @@ window.addEventListener('keyup', (e) => {
   if (e.code === 'KeyG' && player && game.state === 'live') { const q = isPOV() ? povGround(NADE_RANGE) : { x: mouse.wx, z: mouse.wz }; input.nadeThrow = { x: q.x, z: q.z }; }
 });
 window.addEventListener('blur', clearInputs);
+// any touch brings the on-screen controls back (a tablet with a mouse switches between the two)
+window.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch' || e.pointerType === 'pen') touchMode = true; }, true);
 window.addEventListener('pointermove', (e) => {
   if (e.pointerType !== 'mouse') return;
   if (Math.abs(e.movementX || 0) + Math.abs(e.movementY || 0) > 0) touchMode = false;
@@ -7041,6 +7105,218 @@ function bombShopClick(b) {
 }
 
 
+/* ================= customizable HUD =================
+   Every on-screen control can be moved, resized and made more transparent. A layout lives in one of three slots
+   (saved on this device with the other settings), separately for landscape and portrait. Positions are fractions
+   of the screen, so a layout fits any phone. Slots left empty use the built-in layout. */
+const HUD_EL = [
+  { k: 'fire', sel: '#fire', name: 'Foc' },
+  { k: 'super', sel: '#super', name: 'Super' },
+  { k: 'nade', sel: '#nade', name: 'Grenadă' },
+  { k: 'jump', sel: '#jumpBtn', name: 'Sari' },
+  { k: 'reload', sel: '#reloadBtn', name: 'Reîncarcă' },
+  { k: 'swap', sel: '#swapBtn', name: 'Schimbă arma' },
+  { k: 'knife', sel: '#knifeBtn', name: 'Cuțit' },
+  { k: 'scope', sel: '#scopeBtn', name: 'Lunetă' },
+  { k: 'act', sel: '#actBtn', name: 'Plantează / dezamorsează' },
+  { k: 'move', sel: '#moveBase', name: 'Joystick' },
+  { k: 'vitals', sel: '#vitals', name: 'Viață și muniție' },
+  { k: 'radar', sel: '#radar', name: 'Harta mică', noMove: true },
+];
+const HUDED = { on: false, work: {}, sel: null, drag: null, from: null, prev: null };
+function hudOrient() { return VW >= VH ? 'land' : 'port'; }
+function cleanHud(h) {
+  const out = { cur: 1, slots: [{}, {}, {}] };
+  if (!h || typeof h !== 'object') return out;
+  out.cur = [1, 2, 3].includes(h.cur) ? h.cur : 1;
+  const num = (v, a, b, d) => (Number.isFinite(+v) ? clamp(+v, a, b) : d);
+  for (let i = 0; i < 3; i++) {
+    const S = h.slots && h.slots[i];
+    if (!S || typeof S !== 'object') continue;
+    for (const o of ['land', 'port']) {
+      const L = S[o]; if (!L || typeof L !== 'object') continue;
+      const C = {};
+      for (const E of HUD_EL) {
+        const v = L[E.k]; if (!v || typeof v !== 'object') continue;
+        const c = {};
+        if (v.x !== undefined && v.y !== undefined && !E.noMove) { c.x = num(v.x, 0, 1, 0.5); c.y = num(v.y, 0, 1, 0.5); }
+        if (v.s !== undefined) c.s = num(v.s, 0.5, 2, 1);
+        if (v.o !== undefined) c.o = num(v.o, 0.2, 1, 1);
+        if (Object.keys(c).length) C[E.k] = c;
+      }
+      out.slots[i][o] = C;
+    }
+  }
+  return out;
+}
+function hudCfg() { return settings.hud && settings.hud.slots ? settings.hud : (settings.hud = cleanHud(settings.hud)); }
+/* the layout in use right now (the editor's working copy while it is open) */
+function hudLayout() {
+  if (HUDED.on) return HUDED.work;
+  const H = hudCfg(), S = H.slots[H.cur - 1];
+  return (S && S[hudOrient()]) || {};
+}
+function hudItem(k) { return hudLayout()[k] || null; }
+function hudScale(k) { const o = hudItem(k); return o && o.s ? o.s : 1; }
+function applyHud() {
+  const L = hudLayout();
+  for (const E of HUD_EL) {
+    const el = $(E.sel); if (!el) continue;
+    const o = L[E.k];
+    if (E.k === 'move') { el.style.scale = o && o.s && o.s !== 1 ? String(o.s) : ''; el.style.opacity = o && o.o !== undefined && o.o < 1 ? String(o.o) : ''; continue; }
+    const st = el.style;
+    st.left = st.top = st.right = st.bottom = st.translate = st.scale = st.opacity = st.transformOrigin = '';
+    if (E.k === 'vitals' || E.k === 'act') st.transform = '';
+    if (!o) continue;
+    if (o.x !== undefined && !E.noMove) {
+      st.left = (o.x * VW).toFixed(1) + 'px'; st.top = (o.y * VH).toFixed(1) + 'px'; st.right = 'auto'; st.bottom = 'auto'; st.translate = '-50% -50%';
+      if (E.k === 'vitals' || E.k === 'act') st.transform = 'none'; // their stylesheet centres them with a transform
+    }
+    if (o.s && o.s !== 1) { st.scale = String(o.s); if (E.noMove) st.transformOrigin = 'top left'; }
+    if (o.o !== undefined && o.o < 1) st.opacity = String(o.o);
+  }
+  if (typeof restMove === 'function') restMove();
+}
+function saveHud() {
+  const H = hudCfg(), S = H.slots[H.cur - 1] || (H.slots[H.cur - 1] = {});
+  S[HUDED.orient || hudOrient()] = JSON.parse(JSON.stringify(HUDED.work));
+  saveSettings();
+}
+/* ---------------- the editor ---------------- */
+function rectCenter(sel) { const el = $(sel); if (!el) return null; const r = el.getBoundingClientRect(); if (!r.width) return null; return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height }; }
+function hudHit(x, y) {
+  let best = null, area = 1e12;
+  for (const E of HUD_EL) {
+    const el = $(E.sel); if (!el) continue;
+    const r = el.getBoundingClientRect(); if (!r.width) continue;
+    const pad = 6;
+    if (x < r.left - pad || x > r.right + pad || y < r.top - pad || y > r.bottom + pad) continue;
+    const a = r.width * r.height; if (a < area) { area = a; best = { E, el, r }; }
+  }
+  return best;
+}
+function openHudEd(from) {
+  const H = hudCfg();
+  HUDED.on = true; HUDED.from = from || null; HUDED.sel = null; HUDED.drag = null;
+  HUDED.work = JSON.parse(JSON.stringify((H.slots[H.cur - 1] || {})[hudOrient()] || {}));
+  HUDED.orient = hudOrient();
+  HUDED.prev = { hud: el.hud.hidden, controls: el.controls.hidden, pause: el.pause.hidden, menu: el.menu.hidden, modeSel: $('#modeSel').hidden };
+  el.pause.hidden = true; el.menu.hidden = true; $('#modeSel').hidden = true;
+  el.hud.hidden = false; el.controls.hidden = false;
+  $('#app').classList.add('hud-edit');
+  for (const E of HUD_EL) { const e = $(E.sel); if (e) e.dataset.hk = E.k; }
+  $('#hudEd').hidden = false;
+  applyHud(); renderHudEd(); Snd.init(); Snd.ui();
+}
+function closeHudEd() {
+  if (!HUDED.on) return;
+  saveHud();
+  HUDED.on = false; HUDED.drag = null;
+  $('#app').classList.remove('hud-edit');
+  for (const e of document.querySelectorAll('.he-on')) e.classList.remove('he-on');
+  $('#hudEd').hidden = true;
+  const P = HUDED.prev || {};
+  el.hud.hidden = !!P.hud; el.controls.hidden = !!P.controls; el.menu.hidden = !!P.menu; $('#modeSel').hidden = !!P.modeSel; el.pause.hidden = !!P.pause;
+  applyHud(); if (typeof renderHudMini === 'function') renderHudMini(); Snd.ui();
+}
+function renderHudEd() {
+  const H = hudCfg();
+  for (const b of document.querySelectorAll('#heSlots button')) b.classList.toggle('on', +b.dataset.s === H.cur);
+  for (const e of document.querySelectorAll('.he-on')) e.classList.remove('he-on');
+  const E = HUDED.sel ? HUD_EL.find((q) => q.k === HUDED.sel) : null, box = $('#heSel'), hint = $('#heHint');
+  box.hidden = !E; hint.hidden = !!E;
+  // the selection panel and the hint sit just under the toolbar, however many rows it wraps into
+  const top = Math.round($('#hudEd .he-bar').getBoundingClientRect().bottom + 6) + 'px';
+  box.style.top = top; hint.style.top = top;
+  if (!E) return;
+  const node = $(E.sel); if (node) node.classList.add('he-on');
+  const o = HUDED.work[E.k] || {};
+  $('#heName').textContent = E.name;
+  const s = Math.round((o.s || 1) * 100), op = Math.round((o.o !== undefined ? o.o : 1) * 100);
+  $('#heSize').value = String(s); $('#heSizeV').textContent = s + '%';
+  $('#heOp').value = String(op); $('#heOpV').textContent = op + '%';
+}
+function setHudProp(k, prop, v) {
+  const o = HUDED.work[k] || (HUDED.work[k] = {});
+  o[prop] = v;
+  if (prop === 's' && Math.abs(v - 1) < 0.001) delete o.s;
+  if (prop === 'o' && v >= 0.999) delete o.o;
+  if (!Object.keys(o).length) delete HUDED.work[k];
+  applyHud(); saveHud();
+}
+/* ready-made starting points: the built-in layout, bigger buttons spread a little apart, or smaller and tighter */
+function hudTemplate(t) {
+  HUDED.work = {}; applyHud();
+  if (t !== 'def') {
+    const big = t === 'big', f = rectCenter('#fire'), spread = big ? 1.16 : 0.9, s = big ? 1.25 : 0.8;
+    for (const E of HUD_EL) {
+      if (E.k === 'radar') { HUDED.work.radar = { s: big ? 1.15 : 0.85 }; continue; }
+      if (E.k === 'vitals') continue;
+      const c = rectCenter(E.sel); if (!c || !f) continue;
+      const nx = E.k === 'move' ? c.x : f.x + (c.x - f.x) * spread, ny = E.k === 'move' ? c.y : f.y + (c.y - f.y) * spread;
+      HUDED.work[E.k] = { x: +clamp(nx / VW, 0.04, 0.96).toFixed(4), y: +clamp(ny / VH, 0.08, 0.95).toFixed(4), s: E.k === 'fire' ? (big ? 1.15 : 0.88) : E.k === 'move' ? (big ? 1.15 : 0.88) : s };
+    }
+  }
+  HUDED.sel = null; applyHud(); saveHud(); renderHudEd(); Snd.ui();
+}
+function wireHudEd() {
+  const cat = $('#heCatch');
+  cat.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    const hit = hudHit(e.clientX, e.clientY);
+    if (!hit) { HUDED.sel = null; renderHudEd(); return; }
+    HUDED.sel = hit.E.k;
+    const cx = hit.r.left + hit.r.width / 2, cy = hit.r.top + hit.r.height / 2;
+    HUDED.drag = { id: e.pointerId, k: hit.E.k, dx: e.clientX - cx, dy: e.clientY - cy, x0: e.clientX, y0: e.clientY, moved: false, noMove: !!hit.E.noMove };
+    try { cat.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+    renderHudEd(); Snd.init(); Snd.ui();
+  });
+  cat.addEventListener('pointermove', (e) => {
+    const D = HUDED.drag; if (!D || D.id !== e.pointerId || D.noMove) return;
+    if (!D.moved && Math.hypot(e.clientX - D.x0, e.clientY - D.y0) < 6) return;
+    D.moved = true;
+    const o = HUDED.work[D.k] || (HUDED.work[D.k] = {});
+    o.x = +clamp((e.clientX - D.dx) / VW, 0.02, 0.98).toFixed(4); o.y = +clamp((e.clientY - D.dy) / VH, 0.03, 0.98).toFixed(4);
+    applyHud();
+  });
+  const end = (e) => { const D = HUDED.drag; if (!D || D.id !== e.pointerId) return; HUDED.drag = null; if (D.moved) saveHud(); };
+  cat.addEventListener('pointerup', end); cat.addEventListener('pointercancel', end);
+  $('#heSlots').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-s]'); if (!b) return;
+    saveHud();
+    const H = hudCfg(); H.cur = +b.dataset.s; saveSettings();
+    HUDED.work = JSON.parse(JSON.stringify((H.slots[H.cur - 1] || {})[hudOrient()] || {}));
+    HUDED.sel = null; applyHud(); renderHudEd(); Snd.ui();
+  });
+  $('#heTpl').addEventListener('click', (e) => { const b = e.target.closest('button[data-t]'); if (b) hudTemplate(b.dataset.t); });
+  $('#heSize').addEventListener('input', (e) => { if (!HUDED.sel) return; const v = +e.target.value / 100; $('#heSizeV').textContent = Math.round(v * 100) + '%'; setHudProp(HUDED.sel, 's', v); });
+  $('#heOp').addEventListener('input', (e) => { if (!HUDED.sel) return; const v = +e.target.value / 100; $('#heOpV').textContent = Math.round(v * 100) + '%'; setHudProp(HUDED.sel, 'o', v); });
+  $('#heResetOne').addEventListener('click', () => { if (!HUDED.sel) return; delete HUDED.work[HUDED.sel]; applyHud(); saveHud(); renderHudEd(); Snd.ui(); });
+  $('#heDone').addEventListener('click', closeHudEd);
+  $('#hudPause').addEventListener('click', () => openHudEd('pause'));
+  $('#hudOpen').addEventListener('click', () => openHudEd('lobby'));
+  for (const b of document.querySelectorAll('#hudSlotsMini button[data-s]')) b.addEventListener('click', () => { const H = hudCfg(); H.cur = +b.dataset.s; saveSettings(); applyHud(); renderHudMini(); Snd.init(); Snd.ui(); });
+  renderHudMini();
+}
+/* the slot picker in MOD DE JOC (choose which saved layout plays) */
+function renderHudMini() {
+  const H = hudCfg();
+  for (const b of document.querySelectorAll('#hudSlotsMini button[data-s]')) {
+    const S = H.slots[+b.dataset.s - 1] || {}, used = Object.keys(S.land || {}).length + Object.keys(S.port || {}).length > 0;
+    b.classList.toggle('on', +b.dataset.s === H.cur);
+    const sm = b.querySelector('small'); if (sm) sm.textContent = used ? 'personalizat' : 'implicit';
+  }
+}
+/* the editor follows the phone when it turns: each orientation has its own layout */
+function hudOnResize() {
+  if (!HUDED.on) { applyHud(); return; }
+  const o = hudOrient(); if (o === HUDED.orient) { applyHud(); return; }
+  const H = hudCfg(), S = H.slots[H.cur - 1] || (H.slots[H.cur - 1] = {});
+  S[HUDED.orient] = JSON.parse(JSON.stringify(HUDED.work)); saveSettings();
+  HUDED.orient = o; HUDED.work = JSON.parse(JSON.stringify(S[o] || {})); HUDED.sel = null; applyHud(); renderHudEd();
+}
+
+
 /* ================= overlay (bars, numbers) ================= */
 const ov = $('#ov'), octx = ov.getContext('2d');
 let VW = 1, VH = 1, DPR = 1, OVR = 1;
@@ -7630,7 +7906,7 @@ function buildMenu() {
     b.innerHTML = '<div class="img" style="background-image:url(map_' + id + '.jpg),' + grads[id] + '"></div><span><b>' + D.name + '</b><small>' + D.sub + '</small></span>';
     mc.appendChild(b);
   }
-  bindSeg('#optMap', 'map'); bindSeg('#optAssist', 'assist'); bindSeg('#optCam', 'cam');
+  bindSeg('#optMap', 'map'); bindSeg('#optAssist', 'assist');
   bindSeg('#optTeam', 'team'); bindSeg('#optMode', 'mode', Number); bindSeg('#optDiff', 'diff'); bindSeg('#optGfx', 'gfx', null, applyGfx);
   refreshMenu();
   const menu = $('#menu');
@@ -7651,7 +7927,7 @@ function bindSeg(sel, key, conv, after) {
   });
 }
 function refreshMenu() {
-  for (const [sel, key] of [['#optTeam', 'team'], ['#optMode', 'mode'], ['#optDiff', 'diff'], ['#optMap', 'map'], ['#optGfx', 'gfx'], ['#optAssist', 'assist'], ['#optCam', 'cam']])
+  for (const [sel, key] of [['#optTeam', 'team'], ['#optMode', 'mode'], ['#optDiff', 'diff'], ['#optMap', 'map'], ['#optGfx', 'gfx'], ['#optAssist', 'assist']])
     for (const b of document.querySelectorAll(sel + ' button[data-v]')) b.classList.toggle('on', String(settings[key]) === b.dataset.v);
   updateLobbyText();
 }
@@ -7671,9 +7947,9 @@ function loadSettings() {
   if (settings.queue === 'classic') settings.queue = 'train';
   if (!['train', 'custom', 'ranked'].includes(settings.queue)) settings.queue = 'train';
   settings.xh = cleanXh(settings.xh);
-  if (settings.camV !== 1) { settings.cam = 'tpp'; settings.camV = 1; }
+  settings.hud = cleanHud(settings.hud);
   if (settings.mapV !== 2) { settings.map = 'bazar'; settings.mapV = 2; }
-  if (!['tpp', 'fpp', 'top'].includes(settings.cam)) settings.cam = 'tpp';
+  settings.cam = 'fpp'; // the game is first person only
 }
 function saveSettings() { try { localStorage.setItem('blitzsquad.settings', JSON.stringify(Object.assign({}, settings, game.rankedSaved || {}))); } catch (e) { /* storage unavailable */ } }
 let wakeLock = null;
@@ -7782,7 +8058,7 @@ function resize() {
   renderer.setPixelRatio(DPR); renderer.setSize(VW, VH, false);
   camera.aspect = VW / VH; camera.updateProjectionMatrix();
   OVR = Math.min(DPR, 1.5); ov.width = Math.round(VW * OVR); ov.height = Math.round(VH * OVR);
-  readSafe(); restMove(); sizeRadar();
+  readSafe(); sizeRadar(); hudOnResize(); // places the controls (and the joystick) for this screen
 }
 window.addEventListener('resize', resize);
 window.addEventListener('orientationchange', () => setTimeout(resize, 250));
@@ -7830,14 +8106,14 @@ function frame(now) {
 function boot(data) {
   loadSettings(); loadProfile();
   if (data && data.settings) { for (const k in settings) if (data.settings[k] !== undefined) settings[k] = data.settings[k]; loadSettingsGuard(); }
-  buildMenu(); buildBuyUI(); wireButtons(); wireRoom(); wireXhEd(); renderXhEd(); pnStart();
+  buildMenu(); buildBuyUI(); wireButtons(); wireRoom(); wireXhEd(); renderXhEd(); wireHudEd(); pnStart();
   touchMode = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
   $('#helpKeys').hidden = touchMode; $('#helpTouch').hidden = !touchMode && !(navigator.maxTouchPoints > 0);
   resize(); applyGfx();
   requestAnimationFrame((t) => { lastT = t; frame(t); });
   const pb = $('#playBtn'); pb.disabled = true; $('#loadInfo').hidden = true;
   const bootEl = $('#boot'), t0 = performance.now();
-  const TIPS = ['Ochește capul: un glonț în cap face daune de 2,5 ori mai mari.', 'Camera se schimbă din MOD DE JOC: third person, first person sau de sus.',
+  const TIPS = ['Ochește capul: un glonț în cap face daune de 2,5 ori mai mari.', 'Butoanele de pe ecran le muți și le mărești din Pauză → HUD, cu până la 3 sloturi salvate.',
     'Tufișurile te ascund: inamicii te văd doar de foarte aproape.', 'Super-ul se încarcă atunci când lovești inamicii.', 'Atacatorii plantează bomba, apărătorii o dezamorsează.',
     'Banii rămân de la o rundă la alta, așa că alege cu grijă ce cumperi.', 'Fumigena blochează vederea: folosește-o când treci prin zone deschise.', 'Campionii noi se deblochează din Magazin cu monede.', 'Ranked și meciurile custom se joacă doar cu oameni: invită-ți prietenii în cameră.',
     'Apasă + lângă campionul tău ca să inviți un prieten. Cine intră apare lângă tine.', 'Ținta se personalizează din MOD DE JOC → Țintă.', 'Cu AWP-ul în mână apasă LUNETĂ: o dată zoom ×2, a doua oară ×5.', 'Bomba C4 are skinuri în Magazin, la Bombă C4.', 'Sari pe lăzi și butoaie ca să vezi peste ele: de pe o ladă mică urci și pe teancuri.', 'În Arsenal, o atingere pe armă îți arată detaliile, a doua o cumpără.', 'Din săritură tragi mai imprecis: aterizează, apoi trage.'];
@@ -7855,7 +8131,7 @@ function boot(data) {
   });
 }
 function loadSettingsGuard() { if (!AGENTS[settings.agent]) settings.agent = DEFAULT_AGENT; if (settings.mode !== 3 && settings.mode !== 5) settings.mode = 5; if (!DIFFS[settings.diff]) settings.diff = 'normal'; if (settings.team !== 'atk' && settings.team !== 'def') settings.team = 'atk'; }
-window.__bs = { pixTex, VM, VM_GUN, ELBOW, reloadPose, fireAs: (c, a) => tryFire(c, a), tryJump, supportH, standAt, vertTick, standH, MAPC, WEAPONS, NET, PN, RL, buildKnifeModel, toggleKnife, swapWeapon, netJoinCode, inviteFriend, answerInvite, netHostStart, startRoomMatch, openRoom, profile_: () => profile, myCard, setMemberTeam, leaveRoom, lobby, scopeCycle, topAt, shotSpread, drawXh, xhCfg, renderShop, bombDef, myBombKey, game, chars, bomb, settings, simStep, startMatch, enterGame, findPath, get player() { return player; }, get touchMode() { return touchMode; }, setFF(v) { fastForward = v; }, botify() { if (player) player.ai = makeAI(); }, MW, MH, grid, siteTiles, cam, camera, scene, renderer, ASSETS, buildWorld, world, useSuper, turrets, profile, NET, AGENTS, buildCharMesh, disposeCharMesh, input, startAttack, autoTarget, endMatch, rankOf, lobbyConfetti, view, vm, charHeight, updateCamera, mouse, get MAP() { return MAP; } };
+window.__bs = { HUDED, openHudEd, closeHudEd, hudTemplate, applyHud, hudCfg, pixTex, VM, VM_GUN, ELBOW, reloadPose, fireAs: (c, a) => tryFire(c, a), tryJump, supportH, standAt, vertTick, standH, MAPC, WEAPONS, NET, PN, RL, buildKnifeModel, toggleKnife, swapWeapon, netJoinCode, inviteFriend, answerInvite, netHostStart, startRoomMatch, openRoom, profile_: () => profile, myCard, setMemberTeam, leaveRoom, lobby, scopeCycle, topAt, shotSpread, drawXh, xhCfg, renderShop, bombDef, myBombKey, game, chars, bomb, settings, simStep, startMatch, enterGame, findPath, get player() { return player; }, get touchMode() { return touchMode; }, setFF(v) { fastForward = v; }, botify() { if (player) player.ai = makeAI(); }, MW, MH, grid, siteTiles, cam, camera, scene, renderer, ASSETS, buildWorld, world, useSuper, turrets, profile, NET, AGENTS, buildCharMesh, disposeCharMesh, input, startAttack, autoTarget, endMatch, rankOf, lobbyConfetti, view, vm, charHeight, updateCamera, mouse, get MAP() { return MAP; } };
 const hot = window.claude && window.claude.hot;
 try { if (hot && hot.snapshot) hot.snapshot(() => ({ settings: Object.assign({}, settings) })); } catch (e) { /* no hot reload */ }
 if (hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});
