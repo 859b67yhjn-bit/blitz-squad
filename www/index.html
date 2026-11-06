@@ -5935,6 +5935,7 @@ const PITCH = (56 * Math.PI) / 180;
 function camDist() { const asp = camera.aspect, t = Math.tan((camera.fov * Math.PI) / 360); return clamp((asp >= 1 ? 8.2 : 5.0) / (t * asp), 8, 34); }
 function spectateTarget() {
   if (!player) return null;
+  if (game.dm) return chars.find((x) => x.id === game.specId && x.alive) || player; // deathmatch: the camera stays on whoever got you
   let c = chars.find((x) => x.id === game.specId && x.alive && x.team === player.team);
   if (!c) { c = chars.find((x) => x.alive && x.team === player.team && x !== player); if (c) game.specId = c.id; }
   if (!c && bomb.state === 'planted') return { x: bomb.x, z: bomb.z };
@@ -8482,7 +8483,7 @@ function addFeed(src, victim, wid) {
   setTimeout(() => d.remove(), 7000);
 }
 function onPlayerDeath(src) {
-  clearInputs(); game.specId = -1;
+  clearInputs(); game.specId = game.dm && src && src !== player ? src.id : -1;
   toast(src ? 'Te-a eliminat ' + src.name : 'Ai fost eliminat', 'bad');
 }
 function moneyBump() { el.money.classList.remove('bump'); void el.money.offsetWidth; el.money.classList.add('bump'); }
