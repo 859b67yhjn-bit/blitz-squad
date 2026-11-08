@@ -1,0 +1,35 @@
+name: Publica versiunea web
+
+# The browser version (the www folder) goes to GitHub Pages:
+# https://859b67yhjn-bit.github.io/blitz-squad/
+# Needs Settings -> Pages -> Source: "GitHub Actions" turned on once.
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths: [ 'www/**' ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: www
+      - id: deployment
+        uses: actions/deploy-pages@v4
